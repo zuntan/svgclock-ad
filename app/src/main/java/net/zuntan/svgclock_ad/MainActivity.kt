@@ -5,8 +5,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.FragmentContainerView
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var cv : ClockView
+    lateinit var fcv : FragmentContainerView
+
+    lateinit var sf :SettingsFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -16,5 +23,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        cv = findViewById<ClockView>( R.id.clockView )
+        fcv = findViewById<FragmentContainerView>( R.id.fragmentContainerView )
+        sf = fcv.getFragment<SettingsFragment>()
     }
 }

@@ -113,6 +113,7 @@ class ImageInfo {
     val svgLongHandle: SVG?
     val svgShortHandle: SVG?
     val svgSecondHandle: SVG?
+    val svgCenterCircle: SVG?
     val svgSubsecondBase: SVG?
     val svgSubsecondHandle: SVG?
     val svgSubsecondCenterCircle: SVG?
@@ -147,6 +148,7 @@ class ImageInfo {
         svgLongHandle = srcLongHandle?.let { SVG.getFromString( it ) }
         svgShortHandle = srcShortHandle?.let { SVG.getFromString( it ) }
         svgSecondHandle = srcSecondHandle?.let { SVG.getFromString( it ) }
+        svgCenterCircle = srcCenterCircle?.let { SVG.getFromString( it ) }
         svgSubsecondBase = srcSubsecondBase?.let { SVG.getFromString( it ) }
         svgSubsecondHandle = srcSubsecondHandle?.let { SVG.getFromString( it ) }
         svgSubsecondCenterCircle = srcSubsecondCenterCircle?.let { SVG.getFromString( it ) }

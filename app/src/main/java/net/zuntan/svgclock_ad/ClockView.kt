@@ -99,7 +99,7 @@ class ClockView : View {
 
         a.recycle()
 
-        setupSource( resources.openRawResource( R.raw.clock_theme_1 ) )
+        setupSource( resources.openRawResource( R.raw.clock_theme_7 ) )
 
         dTime = 50
     }
@@ -144,8 +144,8 @@ class ClockView : View {
         val cw = cr - cl
         val ch = cb - ct
 
-        val dw = imageInfo!!.svgBase!!.documentWidth
-        val dh = imageInfo!!.svgBase!!.documentHeight
+        val dw = imageInfo!!.sz!!.x
+        val dh = imageInfo!!.sz!!.y
 
         val zw = cw.toFloat() / dw.toFloat()
         val zh = ch.toFloat() / dh.toFloat()
@@ -159,8 +159,10 @@ class ClockView : View {
 
         val vp = android.graphics.RectF(ddl, ddt, ddl + ddw, ddt + ddh)
 
-        val bcx =  ddl + ddw / 2
-        val bcy =  ddt + ddh / 2
+        val bcx =  ddl + ddw * ( imageInfo!!.baseCenter.x / ( imageInfo!!.vboxWH!!.x - imageInfo!!.vboxXY!!.x ) )
+        val bcy =  ddt + ddh * ( imageInfo!!.baseCenter.y / ( imageInfo!!.vboxWH!!.y - imageInfo!!.vboxXY!!.y ) )
+        val scx =  ddl + ddw * ( imageInfo!!.subsecondCenter.x / ( imageInfo!!.vboxWH!!.x - imageInfo!!.vboxXY!!.x ) )
+        val scy =  ddt + ddh * ( imageInfo!!.subsecondCenter.y / ( imageInfo!!.vboxWH!!.y - imageInfo!!.vboxXY!!.y ) )
 
         Logcat.d("%s", vp)
 
@@ -227,6 +229,14 @@ class ClockView : View {
             canvas.restore()
         }
 
+        imageInfo!!.svgCenterCircle!!.run {
+            documentWidth = vp.width()
+            documentHeight = vp.height()
+
+            canvas.save()
+            renderToCanvas(canvas, vp)
+            canvas.restore()
+        }
     }
 
     private fun onDrawA(canvas: Canvas) {

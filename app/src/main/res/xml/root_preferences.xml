@@ -1,35 +1,40 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
-
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
-
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
-
+    <PreferenceCategory app:title="Second Handle">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="confShowSecond"
+            android:title="Show Second" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="confEnableSubSecond"
+            android:title="Enable sub second handle" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="confEnableSecondSmoothly"
+            android:title="Endble second handle smoothly" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
-
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
-
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
-
+    <PreferenceCategory app:title="Theme" >
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/reply_entries"
+            android:entryValues="@array/reply_values"
+            android:key="confPresetTheme"
+            android:title="Preset theme"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="confEnableCustomTheme"
+            android:title="Enable custom theme" />
+        <EditTextPreference
+            android:key="confCustomThemeLocation"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Custom theme location"
+            app:dependency="confEnableCustomTheme"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>
