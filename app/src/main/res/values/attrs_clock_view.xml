@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="ClockView">
+        <attr name="handle_hour" format="float" />
+        <attr name="handle_min"  format="float" />
+        <attr name="handle_sec"  format="float" />
+    </declare-styleable>
+</resources>
