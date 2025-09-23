@@ -3,4 +3,14 @@
     <style name="Widget.Theme.Svgclockad.MyView" parent="">
         <item name="android:background">@color/gray_400</item>
     </style>
+
+    <style name="Widget.Svgclockad.AppWidget.Container" parent="android:Widget">
+        <item name="android:id">@android:id/background</item>
+        <item name="android:background">?android:attr/colorBackground</item>
+    </style>
+
+    <style name="Widget.Svgclockad.AppWidget.InnerView" parent="android:Widget">
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
 </resources>

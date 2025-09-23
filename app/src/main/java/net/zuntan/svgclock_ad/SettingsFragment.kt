@@ -1,13 +1,75 @@
 package net.zuntan.svgclock_ad
 
 import android.os.Bundle
+import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 
-class SettingsFragment : PreferenceFragmentCompat() {
+private fun makeConfPresetThemeValue( no : Int ): String
+{
+    return "Theme_%d".format( no )
+}
+
+val LIST_PRESET_THEME = listOf(
+    Triple(1, makeConfPresetThemeValue( 1 ), R.raw.clock_theme_1 ),
+    Triple(6, makeConfPresetThemeValue( 6 ), R.raw.clock_theme_6 ),
+    Triple(7, makeConfPresetThemeValue( 7 ), R.raw.clock_theme_7,)
+)
+
+class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+
+    var listener : Preference.OnPreferenceChangeListener? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
+        for( x in arrayOf( "confShowSecond", "confEnableSubSecond", "confEnableSecondSmoothly",
+                            "confPresetTheme", "confEnableCustomTheme", "confCustomThemeLocation" ) )
+        {
+            findPreference<Preference>( x )?.onPreferenceChangeListener = this
+        }
 
+        val themeEntries = ArrayList<CharSequence>()
+        val themeEntryValues = ArrayList<CharSequence>()
+
+        var currentPresetThemeFound = false
+        val currentPresetTheme = preferenceManager.sharedPreferences?.getString( "confPresetTheme", null )
+
+        for( x in LIST_PRESET_THEME ) {
+
+            val src = resources.openRawResource( x.third )
+            val im = ImageInfo( src )
+
+            val nm = if( im.config == null || im.config!!.theme_name == null ) { "" } else { im.config!!.theme_name }
+
+            themeEntries.add( "[No.%d] %s".format( x.first, nm ) )
+            themeEntryValues.add( x.second )
+
+             if ( x.second == currentPresetTheme )
+             {
+                 currentPresetThemeFound = true
+             }
+        }
+
+        findPreference< ListPreference>( "confPresetTheme" )?.apply {
+            entries = themeEntries.toTypedArray()
+            entryValues = themeEntryValues.toTypedArray()
+
+            if( !currentPresetThemeFound ) {
+                setValueIndex(0)
+            }
+        }
+    }
+
+    override fun onPreferenceChange(
+        preference: Preference,
+        newValue: Any?
+    ): Boolean {
+        // Logcat.d( "K:%s V:%s", preference.key, newValue )
+        listener?.let {
+            return it.onPreferenceChange( preference, newValue )
+        }
+        return true
     }
 }

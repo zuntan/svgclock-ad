@@ -14,6 +14,7 @@ import kotlinx.serialization.decodeFromString
 import com.akuleshov7.ktoml.Toml
 
 import com.caverock.androidsvg.SVG
+import java.io.InputStream
 
 const val NAMESPACE_SVG = "" // ""http://www.w3.org/2000/svg"
 const val NAMESPACE_INKSCAPE = "http://www.inkscape.org/namespaces/inkscape"
@@ -90,37 +91,57 @@ private fun parseSvgTransformValue(value: String?): AffineTransform {
 
 class ImageInfo {
 
-    val srcOrg: String?
-    val srcBase: String?
-    val srcBaseText: String?
-    val srcLongHandle: String?
-    val srcShortHandle: String?
-    val srcSecondHandle: String?
-    val srcCenterCircle: String?
-    val srcSubsecondBase: String?
-    val srcSubsecondHandle: String?
-    val srcSubsecondCenterCircle: String?
-    val srcConfig: String?
+    var srcOrg: String? = null
+    var srcBase: String? = null
+    var srcBaseText: String? = null
+    var srcLongHandle: String? = null
+    var srcShortHandle: String? = null
+    var srcSecondHandle: String? = null
+    var srcCenterCircle: String? = null
+    var srcSubsecondBase: String? = null
+    var srcSubsecondHandle: String? = null
+    var srcSubsecondCenterCircle: String? = null
+    var srcConfig: String? = null
 
-    val sz: ImmutableVec?
-    val vboxXY: ImmutableVec?
-    val vboxWH: ImmutableVec?
+    var sz: ImmutableVec? = null
+    var vboxXY: ImmutableVec? = null
+    var vboxWH: ImmutableVec? = null
 
-    val baseCenter: ImmutableVec
-    val subsecondCenter: ImmutableVec
+    var baseCenter: ImmutableVec? = null
+    var subsecondCenter: ImmutableVec? = null
 
-    val svgBase: SVG?
-    val svgLongHandle: SVG?
-    val svgShortHandle: SVG?
-    val svgSecondHandle: SVG?
-    val svgCenterCircle: SVG?
-    val svgSubsecondBase: SVG?
-    val svgSubsecondHandle: SVG?
-    val svgSubsecondCenterCircle: SVG?
+    var svgBase: SVG? = null
+    var svgLongHandle: SVG? = null
+    var svgShortHandle: SVG? = null
+    var svgSecondHandle: SVG? = null
+    var svgCenterCircle: SVG? = null
+    var svgSubsecondBase: SVG? = null
+    var svgSubsecondHandle: SVG? = null
+    var svgSubsecondCenterCircle: SVG? = null
 
-    val config: Config?
+    var config: Config? = null
+
+    constructor(src: InputStream ) {
+        val src = java.io.InputStreamReader( src )
+        val tmp = java.io.StringWriter()
+
+        var buf = CharArray( 1024 )
+
+        while(true)
+        {
+            val l = src.read( buf )
+            if( l == -1 ) { break }
+            tmp.write( buf, 0, l )
+        }
+
+        init( tmp.toString() )
+    }
 
     constructor(src: String) {
+        init( src )
+    }
+
+    private fun init( src: String) {
         srcOrg = src
         srcBase = filterXml("base")
         srcBaseText = filterXml("base_text")
