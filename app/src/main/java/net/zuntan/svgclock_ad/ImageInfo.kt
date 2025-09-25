@@ -1,5 +1,6 @@
 package net.zuntan.svgclock_ad
 
+import android.graphics.Canvas
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlPullParser
 
@@ -15,6 +16,8 @@ import com.akuleshov7.ktoml.Toml
 
 import com.caverock.androidsvg.SVG
 import java.io.InputStream
+import java.time.LocalDateTime
+import kotlin.math.min
 
 const val NAMESPACE_SVG = "" // ""http://www.w3.org/2000/svg"
 const val NAMESPACE_INKSCAPE = "http://www.inkscape.org/namespaces/inkscape"
@@ -120,6 +123,10 @@ class ImageInfo {
     var svgSubsecondCenterCircle: SVG? = null
 
     var config: Config? = null
+
+    var showSecond : Boolean = true
+    var enableSubSecond : Boolean = false
+    var enableSecondSmoothly : Boolean = true
 
     constructor(src: InputStream ) {
         val src = java.io.InputStreamReader( src )
@@ -484,6 +491,140 @@ class ImageInfo {
             sw.toString()
         } else {
             null
+        }
+    }
+
+    fun drawTo( canvas: Canvas )
+    {
+        if( svgBase == null ) return
+
+        val cw = canvas.width
+        val ch = canvas.height
+
+        val dw = sz!!.x
+        val dh = sz!!.y
+
+        val zw = cw.toFloat() / dw.toFloat()
+        val zh = ch.toFloat() / dh.toFloat()
+
+        val z = min(zw, zh)
+
+        val ddw = dw * z
+        val ddh = dh * z
+        val ddl = (cw - ddw) / 2
+        val ddt = (ch - ddh) / 2
+
+        val vp = android.graphics.RectF(ddl, ddt, ddl + ddw, ddt + ddh)
+
+        val bcx =  ddl + ddw * ( baseCenter!!.x / ( vboxWH!!.x - vboxXY!!.x ) )
+        val bcy =  ddt + ddh * ( baseCenter!!.y / ( vboxWH!!.y - vboxXY!!.y ) )
+        val scx =  ddl + ddw * ( subsecondCenter!!.x / ( vboxWH!!.x - vboxXY!!.x ) )
+        val scy =  ddt + ddh * ( subsecondCenter!!.y / ( vboxWH!!.y - vboxXY!!.y ) )
+
+        val t = LocalDateTime.now().toLocalTime()
+        val s = t.toSecondOfDay().toFloat()
+
+        val hHour = s / ( 12f * 60f * 60f ) * 360f
+        val hMin  = s / ( 60f * 60f ) * 360f
+
+        val ms = ( t.toNanoOfDay() / 1_000_000 ).toFloat()
+
+        val sd : Float = if( enableSecondSmoothly ) { ( ms / 1000.0f ) % 1 } else { 0.0f }
+
+        val hSec =  ( ( ( t.second ).toFloat() + sd ) / 60 ) * 360.0f
+
+        svgBase?.run {
+            documentWidth = vp.width()
+            documentHeight = vp.height()
+            renderToCanvas(canvas, vp)
+        }
+
+        if( showSecond && enableSubSecond  ) {
+
+            svgSubsecondBase?.run {
+                documentWidth = vp.width()
+                documentHeight = vp.height()
+                renderToCanvas(canvas, vp)
+            }
+
+            svgSubsecondHandle?.run {
+                documentWidth = vp.width()
+                documentHeight = vp.height()
+
+                canvas.save()
+
+                canvas.translate(scx, scy)
+                canvas.rotate(hSec)
+                canvas.translate(-scx, -scy)
+
+                renderToCanvas(canvas, vp)
+
+                canvas.restore()
+            }
+
+            svgSubsecondCenterCircle?.run {
+                documentWidth = vp.width()
+                documentHeight = vp.height()
+                renderToCanvas(canvas, vp)
+            }
+        }
+
+        svgLongHandle?.run {
+            documentWidth = vp.width()
+            documentHeight = vp.height()
+
+            canvas.save()
+
+            canvas.translate( bcx, bcy )
+            canvas.rotate( hMin )
+            canvas.translate( -bcx, -bcy )
+
+            renderToCanvas(canvas, vp)
+
+            canvas.restore()
+        }
+
+        svgShortHandle?.run {
+            documentWidth = vp.width()
+            documentHeight = vp.height()
+
+            canvas.save()
+
+            canvas.translate( bcx, bcy )
+            canvas.rotate( hHour )
+            canvas.translate( -bcx, -bcy )
+
+            renderToCanvas(canvas, vp)
+
+            canvas.restore()
+        }
+
+        if( showSecond && !enableSubSecond ) {
+            svgSecondHandle?.run {
+                documentWidth = vp.width()
+                documentHeight = vp.height()
+
+                canvas.save()
+
+                canvas.translate(bcx, bcy)
+                canvas.rotate(hSec)
+                canvas.translate(-bcx, -bcy)
+
+                renderToCanvas(canvas, vp)
+
+                canvas.restore()
+            }
+        }
+
+        if( !enableSubSecond  ) {
+            svgCenterCircle?.run {
+                documentWidth = vp.width()
+                documentHeight = vp.height()
+
+                canvas.save()
+                renderToCanvas(canvas, vp)
+                canvas.restore()
+            }
         }
     }
 }

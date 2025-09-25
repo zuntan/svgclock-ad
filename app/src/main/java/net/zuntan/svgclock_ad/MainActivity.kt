@@ -8,6 +8,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.*
+import java.util.concurrent.TimeUnit
 
 val CLOCKVIEW_SIZE_DP : Int = 200
 
@@ -55,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         Logcat.d( "%s", newConfig )
         Logcat.d( "%s", newConfig.orientation )
         */
-
         updateOrientation( newConfig.orientation )
     }
 

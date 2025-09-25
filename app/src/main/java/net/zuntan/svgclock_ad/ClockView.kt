@@ -17,14 +17,16 @@ import com.caverock.androidsvg.SVG
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 
+
+
 /**
  */
 class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    var stopMovement : Boolean = true
-    var showSecond : Boolean = true
-    var enableSubSecond : Boolean = false
-    var enableSecondSmoothly : Boolean = true
+    private var stopMovement : Boolean = true
+    private var pTime : Long = 0
+    private var dTime : Long = 0
+    private var imageInfo : ImageInfo? = null
 
     private val p = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -59,17 +61,6 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-    private var pTime : Long = 0
-    private var dTime : Long = 0
-
-    private var imageInfo : ImageInfo? = null
-
-    private fun setupSource( src : java.io.InputStream )
-    {
-        stopMovement = true
-        imageInfo = ImageInfo( src )
-        stopMovement = false
-    }
 
     constructor(context: Context) : super(context) {
         init(null, 0)
@@ -122,10 +113,9 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
 
     fun setupBySharedPreference( sharedPreferences: SharedPreferences?, key: String? )
     {
+        stopMovement = true
+
         sharedPreferences?.let{
-            showSecond = it.getBoolean( "confShowSecond", true )
-            enableSubSecond = it.getBoolean( "confEnableSubSecond", false )
-            enableSecondSmoothly = it.getBoolean( "confEnableSecondSmoothly", true )
 
             if( listOf( "confPresetTheme", "confEnableCustomTheme", "confCustomThemeLocation", null ).any { it == key } )
             {
@@ -145,10 +135,18 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
                         theme = LIST_PRESET_THEME.first()
                     }
 
-                    setupSource( resources.openRawResource( theme.third ) )
+                    imageInfo = ImageInfo( resources.openRawResource( theme.third ) )
                 }
             }
+
+            imageInfo?.apply {
+                showSecond = it.getBoolean( "confShowSecond", true )
+                enableSubSecond = it.getBoolean( "confEnableSubSecond", false )
+                enableSecondSmoothly = it.getBoolean( "confEnableSecondSmoothly", true )
+            }
         }
+
+        stopMovement = false
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -171,141 +169,7 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     private fun onDrawB(canvas: Canvas) {
-        if( imageInfo == null || imageInfo!!.svgBase == null ) return
-
-        val cl = paddingLeft
-        val ct = paddingTop
-        val cr = width - paddingRight
-        val cb = height - paddingBottom
-
-        val cw = cr - cl
-        val ch = cb - ct
-
-        val dw = imageInfo!!.sz!!.x
-        val dh = imageInfo!!.sz!!.y
-
-        val zw = cw.toFloat() / dw.toFloat()
-        val zh = ch.toFloat() / dh.toFloat()
-
-        val z = min(zw, zh)
-
-        val ddw = dw * z
-        val ddh = dh * z
-        val ddl = (cw - ddw) / 2
-        val ddt = (ch - ddh) / 2
-
-        val vp = android.graphics.RectF(ddl, ddt, ddl + ddw, ddt + ddh)
-
-        val bcx =  ddl + ddw * ( imageInfo!!.baseCenter!!.x / ( imageInfo!!.vboxWH!!.x - imageInfo!!.vboxXY!!.x ) )
-        val bcy =  ddt + ddh * ( imageInfo!!.baseCenter!!.y / ( imageInfo!!.vboxWH!!.y - imageInfo!!.vboxXY!!.y ) )
-        val scx =  ddl + ddw * ( imageInfo!!.subsecondCenter!!.x / ( imageInfo!!.vboxWH!!.x - imageInfo!!.vboxXY!!.x ) )
-        val scy =  ddt + ddh * ( imageInfo!!.subsecondCenter!!.y / ( imageInfo!!.vboxWH!!.y - imageInfo!!.vboxXY!!.y ) )
-
-        val t = LocalDateTime.now().toLocalTime()
-        val s = t.toSecondOfDay().toFloat()
-
-        val hHour = s / ( 12f * 60f * 60f ) * 360f
-        val hMin  = s / ( 60f * 60f ) * 360f
-
-        val ms = ( t.toNanoOfDay() / 1_000_000 ).toFloat()
-
-        val sd : Float = if( enableSecondSmoothly ) { ( ms / 1000.0f ) % 1 } else { 0.0f }
-
-        val hSec =  ( ( ( t.second ).toFloat() + sd ) / 60 ) * 360.0f
-
-        imageInfo!!.svgBase?.run {
-            documentWidth = vp.width()
-            documentHeight = vp.height()
-            renderToCanvas(canvas, vp)
-        }
-
-        if( showSecond && enableSubSecond  ) {
-
-            imageInfo!!.svgSubsecondBase?.run {
-                documentWidth = vp.width()
-                documentHeight = vp.height()
-                renderToCanvas(canvas, vp)
-            }
-
-            imageInfo!!.svgSubsecondHandle?.run {
-                documentWidth = vp.width()
-                documentHeight = vp.height()
-
-                canvas.save()
-
-                canvas.translate(scx, scy)
-                canvas.rotate(hSec)
-                canvas.translate(-scx, -scy)
-
-                renderToCanvas(canvas, vp)
-
-                canvas.restore()
-            }
-
-            imageInfo!!.svgSubsecondCenterCircle?.run {
-                documentWidth = vp.width()
-                documentHeight = vp.height()
-                renderToCanvas(canvas, vp)
-            }
-        }
-
-        imageInfo!!.svgLongHandle?.run {
-            documentWidth = vp.width()
-            documentHeight = vp.height()
-
-            canvas.save()
-
-            canvas.translate( bcx, bcy )
-            canvas.rotate( hMin )
-            canvas.translate( -bcx, -bcy )
-
-            renderToCanvas(canvas, vp)
-
-            canvas.restore()
-        }
-
-        imageInfo!!.svgShortHandle?.run {
-            documentWidth = vp.width()
-            documentHeight = vp.height()
-
-            canvas.save()
-
-            canvas.translate( bcx, bcy )
-            canvas.rotate( hHour )
-            canvas.translate( -bcx, -bcy )
-
-            renderToCanvas(canvas, vp)
-
-            canvas.restore()
-        }
-
-        if( showSecond && !enableSubSecond ) {
-            imageInfo!!.svgSecondHandle?.run {
-                documentWidth = vp.width()
-                documentHeight = vp.height()
-
-                canvas.save()
-
-                canvas.translate(bcx, bcy)
-                canvas.rotate(hSec)
-                canvas.translate(-bcx, -bcy)
-
-                renderToCanvas(canvas, vp)
-
-                canvas.restore()
-            }
-        }
-
-        if( !enableSubSecond  ) {
-            imageInfo!!.svgCenterCircle?.run {
-                documentWidth = vp.width()
-                documentHeight = vp.height()
-
-                canvas.save()
-                renderToCanvas(canvas, vp)
-                canvas.restore()
-            }
-        }
+        imageInfo?.drawTo( canvas )
     }
 
     private fun onDrawA(canvas: Canvas) {
@@ -349,13 +213,8 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
         canvas.restore()
     }
 
-    @SuppressLint("DrawAllocation", "UseKtx")
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
         onDrawB(canvas)
-        //onDrawA(canvas)
     }
-
-
 }

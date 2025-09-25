@@ -56,6 +56,15 @@ dependencies {
     implementation("com.akuleshov7:ktoml-file:0.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
     implementation("com.caverock:androidsvg-aar:1.4")
+    implementation(libs.androidx.work.runtime.ktx)
+
+    // RxJava
+    implementation("io.reactivex.rxjava3:rxjava:3.1.5")
+    // RxKotlin
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
+    // AndroidでのUI操作に必要（メインスレッドへの切り替え用）
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.0")
+
 
     testImplementation(libs.junit)
     testImplementation("kxml2:kxml2:2.3.0")
