@@ -29,24 +29,24 @@ import java.util.concurrent.TimeUnit
 class PowerStateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        val serviceIntent = Intent(context, CustomService::class.java)
+        val serviceIntent = Intent(context, AppService::class.java)
 
         when (intent?.action) {
             Intent.ACTION_POWER_CONNECTED -> {
                 Log.d("PowerStateReceiver", "充電器が接続されました")
-                serviceIntent.action = CustomService.ACTION_TO_STATE_UPDATE
+                serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
             Intent.ACTION_POWER_DISCONNECTED -> {
                 Log.d("PowerStateReceiver", "充電器が切断されました")
-                serviceIntent.action = CustomService.ACTION_TO_STATE_UPDATE
+                serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
             Intent.ACTION_SCREEN_ON -> {
                 Log.d("PowerStateReceiver", "ACTION_SCREEN_ON")
-                serviceIntent.action = CustomService.ACTION_TO_STATE_UPDATE
+                serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
             Intent.ACTION_SCREEN_OFF -> {
                 Log.d("PowerStateReceiver", "ACTION_SCREEN_OFF")
-                serviceIntent.action = CustomService.ACTION_TO_STATE_UPDATE
+                serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
         }
 
@@ -54,7 +54,7 @@ class PowerStateReceiver : BroadcastReceiver() {
     }
 }
 
-class CustomService : Service() {
+class AppService : Service() {
 
     companion object {
 
