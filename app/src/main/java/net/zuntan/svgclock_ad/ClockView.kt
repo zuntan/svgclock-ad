@@ -61,7 +61,6 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
         }
     }
 
-
     constructor(context: Context) : super(context) {
         init(null, 0)
     }

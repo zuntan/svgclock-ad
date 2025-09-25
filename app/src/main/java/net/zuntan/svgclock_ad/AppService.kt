@@ -58,8 +58,8 @@ class AppService : Service() {
 
     companion object {
 
-        const val INTERVAL_FAST_MS = 125L
-        const val INTERVAL_MIDDLE_MS = 330L
+        const val INTERVAL_FAST_MS = 100L
+        const val INTERVAL_MIDDLE_MS = 200L
         const val INTERVAL_SLOW_MS = 5000L
 
         const val ACTION_TO_STATE_UPDATE = "ACTION_TO_STATE_UPDATE"
@@ -67,9 +67,6 @@ class AppService : Service() {
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL_ID = "ForegroundServiceChannel"
         const val NOTIFICATION_CHANNEL_NAME = "Foreground Service Channel"
-
-        const val NOTIFICATION_CONTENT_TITLE = "Fore Ground Service"
-        const val NOTIFICATION_CONTENT_TEXT = "サービスが実行中です..."
     }
 
     private val disposables = CompositeDisposable()
@@ -88,8 +85,8 @@ class AppService : Service() {
 
         // フォアグラウンドサービス用の通知を作成
         val notification: Notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle( NOTIFICATION_CONTENT_TITLE )
-            .setContentText( NOTIFICATION_CONTENT_TEXT )
+            .setContentTitle( getString( R.string.notification_content_title ) )
+            .setContentText( getString( R.string.notification_content_text ) )
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()

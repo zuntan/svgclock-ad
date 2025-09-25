@@ -29,7 +29,7 @@ class AppWidget : AppWidgetProvider() {
 
     override fun onReceive(context: Context,  intent:Intent )
     {
-        Logcat.d( "onReceive" )
+        //Logcat.d( "onReceive" )
         super.onReceive(context, intent)
 
         if( intent.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE && intent.getExtras() == null )
@@ -90,9 +90,15 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+    val app = context.applicationContext as AppApplication
 
-    val opt = appWidgetManager.getAppWidgetOptions( appWidgetId )
+    if( !app.checkUpdate( appWidgetId ) )
+    {
+        Logcat.d( "skip")
+        return
+    }
+
+    val opt = appWidgetManager.getAppWidgetOptions(appWidgetId)
 
     val minWidth = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
     val maxWidth = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
@@ -101,45 +107,23 @@ internal fun updateAppWidget(
 
     val metrics = DisplayMetrics()
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    windowManager.defaultDisplay.getMetrics( metrics )
+    windowManager.defaultDisplay.getMetrics(metrics)
 
     val pxWidth = minWidth * metrics.density
     val pxHeight = minHeight * metrics.density
     val pxmWidth = maxWidth * metrics.density
     val pxmHeight = maxHeight * metrics.density
 
-    val pxsz = min( pxWidth, pxHeight )
-    val pxmsz = min( pxmWidth, pxmHeight )
-
-    val p = Paint().apply {
-        color = Color.GREEN
-        style = Paint.Style.FILL
-        isAntiAlias = true
-    }
-
-    val p1 = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.STROKE
-        strokeWidth = 3.0f
-        isAntiAlias = true
-    }
-
-    val p2 = Paint().apply {
-        color = Color.YELLOW
-        textSize = 40f
-        isAntiAlias = true
-    }
+    val pxsz = min(pxWidth, pxHeight)
+    val pxmsz = min(pxmWidth, pxmHeight)
 
     val bitmap = Bitmap.createBitmap(pxWidth.toInt(), pxHeight.toInt(), Bitmap.Config.ARGB_8888)
-
     val canvas = Canvas(bitmap)
 
-    canvas.drawCircle( pxWidth/2, pxHeight/2, pxsz / 2, p  )
-    canvas.drawText( currentTime, pxWidth/2, pxHeight/2, p2 )
-    canvas.drawRect( 2f, 2f, pxWidth - 1 , pxHeight - 1, p1 )
+    app.drawTo( canvas, appWidgetId )
 
     val views = RemoteViews(context.packageName, R.layout.app_widget)
-    views.setImageViewBitmap( R.id.appwidget_image, bitmap )
+    views.setImageViewBitmap(R.id.appwidget_image, bitmap)
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
