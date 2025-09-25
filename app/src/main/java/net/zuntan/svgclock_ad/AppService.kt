@@ -86,7 +86,7 @@ class AppService : Service() {
         // フォアグラウンドサービス用の通知を作成
         val notification: Notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle( getString( R.string.notification_content_title ) )
-            .setContentText( getString( R.string.notification_content_text ) )
+            //.setContentText( getString( R.string.notification_content_text ) )
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
@@ -130,7 +130,8 @@ class AppService : Service() {
         // レシーバーを動的に登録
         registerReceiver(powerStateReceiver, filter)
 
-        //setupInterval()
+        val app = applicationContext as AppApplication
+        app.serviceOn = true
     }
 
     override fun onDestroy() {
@@ -138,6 +139,9 @@ class AppService : Service() {
         disposables.dispose()
         unregisterReceiver(powerStateReceiver)
         super.onDestroy()
+
+        val app = applicationContext as AppApplication
+        app.serviceOn = false
 
         /*
         val serviceIntent = Intent(this, MyService::class.java)

@@ -14,6 +14,12 @@ class AppApplication: Application(), SharedPreferences.OnSharedPreferenceChangeL
     private var imageInfo: ImageInfo? = null
     private val imageUpdate = HashMap< Int, Long >()
 
+    var serviceOn: Boolean = false
+        get() = field
+        set(value) {
+            field = value
+        }
+
     override fun onCreate() {
         super.onCreate()
         Logcat.d("onCreate")
@@ -100,4 +106,5 @@ class AppApplication: Application(), SharedPreferences.OnSharedPreferenceChangeL
             imageUpdate.put( appWidgetId, t )
         }
     }
+
 }

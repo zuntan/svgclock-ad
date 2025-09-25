@@ -13,6 +13,10 @@ private fun makeConfPresetThemeValue( no : Int ): String
 
 val LIST_PRESET_THEME = listOf(
     Triple(1, makeConfPresetThemeValue( 1 ), R.raw.clock_theme_1 ),
+    Triple(2, makeConfPresetThemeValue( 2 ), R.raw.clock_theme_2 ),
+    Triple(3, makeConfPresetThemeValue( 3 ), R.raw.clock_theme_3 ),
+    Triple(4, makeConfPresetThemeValue( 4 ), R.raw.clock_theme_4 ),
+    Triple(5, makeConfPresetThemeValue( 5 ), R.raw.clock_theme_5 ),
     Triple(6, makeConfPresetThemeValue( 6 ), R.raw.clock_theme_6 ),
     Triple(7, makeConfPresetThemeValue( 7 ), R.raw.clock_theme_7,)
 )

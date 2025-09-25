@@ -5,6 +5,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Switch
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -42,17 +44,36 @@ class MainActivity : AppCompatActivity() {
 
         updateOrientation( getResources().getConfiguration().orientation )
 
-        findViewById<View>( R.id.btnStart )?.apply {
+        val cv = findViewById<View>( R.id.clockView )
+        val l2nd = findViewById<LinearLayout>( R.id.layout2nd )
+
+        cv?.apply {
             setOnClickListener {
-                val serviceIntent = Intent(this.context, AppService::class.java)
-                startService(serviceIntent)
+                if( l2nd.visibility == View.GONE ) {
+                    l2nd?.visibility = View.VISIBLE
+                    updateOrientation( getResources().getConfiguration().orientation )
+                }
+                else {
+                    l2nd?.visibility = View.GONE
+                    cv.layoutParams.height = LinearLayout.LayoutParams.MATCH_PARENT
+                    cv.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
+                }
             }
         }
 
-        findViewById<View>( R.id.btnStop )?.apply {
-            setOnClickListener {
+        findViewById<Switch>( R.id.swService )?.apply {
+            val app = applicationContext as AppApplication
+            isChecked = app.serviceOn
+
+            setOnCheckedChangeListener { _, isToggled ->
                 val serviceIntent = Intent(this.context, AppService::class.java)
-                stopService(serviceIntent)
+
+                if( isToggled ) {
+                    startService(serviceIntent)
+                }
+                else {
+                    stopService(serviceIntent)
+                }
             }
         }
    }

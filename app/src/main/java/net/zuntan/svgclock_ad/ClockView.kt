@@ -16,7 +16,8 @@ import java.time.LocalDateTime
 import com.caverock.androidsvg.SVG
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-
+import kotlinx.coroutines.delay
+import kotlin.time.Duration
 
 
 /**
@@ -27,6 +28,8 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
     private var pTime : Long = 0
     private var dTime : Long = 0
     private var imageInfo : ImageInfo? = null
+
+    private var drTime : LocalDateTime? = null
 
     private val p = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -87,7 +90,7 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
 
         setupBySharedPreference( PreferenceManager.getDefaultSharedPreferences( this.context ), null )
 
-        dTime = 50
+        dTime = 125
     }
 
     override fun onAttachedToWindow() {
@@ -172,13 +175,14 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
     }
 
     private fun onDrawA(canvas: Canvas) {
-        val t = LocalDateTime.now().toLocalTime()
+
+        var t = LocalDateTime.now().toLocalTime()
         val s = t.toSecondOfDay().toFloat()
 
         val hHour = s / ( 12f * 60f * 60f ) * 360f
         val hMin  = s / ( 60f * 60f ) * 360f
 
-        val ms = ( t.toNanoOfDay() / 1_000_000 ).toFloat()
+        val ms = t.toNanoOfDay().toFloat() / 1_000_000f
 
         val sd : Float = if( false ) { ( ms / 1000.0f ) % 1 } else { 0.0f }
 

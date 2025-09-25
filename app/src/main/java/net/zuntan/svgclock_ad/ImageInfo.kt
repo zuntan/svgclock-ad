@@ -124,31 +124,32 @@ class ImageInfo {
 
     var config: Config? = null
 
-    var showSecond : Boolean = true
-    var enableSubSecond : Boolean = false
-    var enableSecondSmoothly : Boolean = true
+    var showSecond: Boolean = true
+    var enableSubSecond: Boolean = false
+    var enableSecondSmoothly: Boolean = true
 
-    constructor(src: InputStream ) {
-        val src = java.io.InputStreamReader( src )
+    constructor(src: InputStream) {
+        val src = java.io.InputStreamReader(src)
         val tmp = java.io.StringWriter()
 
-        var buf = CharArray( 1024 )
+        var buf = CharArray(1024)
 
-        while(true)
-        {
-            val l = src.read( buf )
-            if( l == -1 ) { break }
-            tmp.write( buf, 0, l )
+        while (true) {
+            val l = src.read(buf)
+            if (l == -1) {
+                break
+            }
+            tmp.write(buf, 0, l)
         }
 
-        init( tmp.toString() )
+        init(tmp.toString())
     }
 
     constructor(src: String) {
-        init( src )
+        init(src)
     }
 
-    private fun init( src: String) {
+    private fun init(src: String) {
         srcOrg = src
         srcBase = filterXml("base")
         srcBaseText = filterXml("base_text")
@@ -172,14 +173,14 @@ class ImageInfo {
 
         config = parseXmlConfig()
 
-        svgBase = srcBase?.let { SVG.getFromString( it ) }
-        svgLongHandle = srcLongHandle?.let { SVG.getFromString( it ) }
-        svgShortHandle = srcShortHandle?.let { SVG.getFromString( it ) }
-        svgSecondHandle = srcSecondHandle?.let { SVG.getFromString( it ) }
-        svgCenterCircle = srcCenterCircle?.let { SVG.getFromString( it ) }
-        svgSubsecondBase = srcSubsecondBase?.let { SVG.getFromString( it ) }
-        svgSubsecondHandle = srcSubsecondHandle?.let { SVG.getFromString( it ) }
-        svgSubsecondCenterCircle = srcSubsecondCenterCircle?.let { SVG.getFromString( it ) }
+        svgBase = srcBase?.let { SVG.getFromString(it) }
+        svgLongHandle = srcLongHandle?.let { SVG.getFromString(it) }
+        svgShortHandle = srcShortHandle?.let { SVG.getFromString(it) }
+        svgSecondHandle = srcSecondHandle?.let { SVG.getFromString(it) }
+        svgCenterCircle = srcCenterCircle?.let { SVG.getFromString(it) }
+        svgSubsecondBase = srcSubsecondBase?.let { SVG.getFromString(it) }
+        svgSubsecondHandle = srcSubsecondHandle?.let { SVG.getFromString(it) }
+        svgSubsecondCenterCircle = srcSubsecondCenterCircle?.let { SVG.getFromString(it) }
     }
 
     private fun parseXmlSzAndVbox(): Triple<ImmutableVec?, ImmutableVec?, ImmutableVec?> {
@@ -494,9 +495,8 @@ class ImageInfo {
         }
     }
 
-    fun drawTo( canvas: Canvas )
-    {
-        if( svgBase == null ) return
+    fun drawTo(canvas: Canvas) {
+        if (svgBase == null) return
 
         val cw = canvas.width
         val ch = canvas.height
@@ -516,22 +516,26 @@ class ImageInfo {
 
         val vp = android.graphics.RectF(ddl, ddt, ddl + ddw, ddt + ddh)
 
-        val bcx =  ddl + ddw * ( baseCenter!!.x / ( vboxWH!!.x - vboxXY!!.x ) )
-        val bcy =  ddt + ddh * ( baseCenter!!.y / ( vboxWH!!.y - vboxXY!!.y ) )
-        val scx =  ddl + ddw * ( subsecondCenter!!.x / ( vboxWH!!.x - vboxXY!!.x ) )
-        val scy =  ddt + ddh * ( subsecondCenter!!.y / ( vboxWH!!.y - vboxXY!!.y ) )
+        val bcx = ddl + ddw * (baseCenter!!.x / (vboxWH!!.x - vboxXY!!.x))
+        val bcy = ddt + ddh * (baseCenter!!.y / (vboxWH!!.y - vboxXY!!.y))
+        val scx = ddl + ddw * (subsecondCenter!!.x / (vboxWH!!.x - vboxXY!!.x))
+        val scy = ddt + ddh * (subsecondCenter!!.y / (vboxWH!!.y - vboxXY!!.y))
 
         val t = LocalDateTime.now().toLocalTime()
         val s = t.toSecondOfDay().toFloat()
 
-        val hHour = s / ( 12f * 60f * 60f ) * 360f
-        val hMin  = s / ( 60f * 60f ) * 360f
+        val hHour = s / (12f * 60f * 60f) * 360f
+        val hMin = s / (60f * 60f) * 360f
 
-        val ms = ( t.toNanoOfDay() / 1_000_000 ).toFloat()
+        val sd: Float = if (enableSecondSmoothly) {
+            val ns1 = t.toNanoOfDay()
+            val ns0 = t.toSecondOfDay().toLong() * 1_000_000_000
+            ((ns1 - ns0).toDouble() / 1_000_000_000).toFloat()
+        } else {
+            0.0f
+        }
 
-        val sd : Float = if( enableSecondSmoothly ) { ( ms / 1000.0f ) % 1 } else { 0.0f }
-
-        val hSec =  ( ( ( t.second ).toFloat() + sd ) / 60 ) * 360.0f
+        val hSec = (((t.second).toFloat() + sd) / 60) * 360.0f
 
         svgBase?.run {
             documentWidth = vp.width()
@@ -539,7 +543,7 @@ class ImageInfo {
             renderToCanvas(canvas, vp)
         }
 
-        if( showSecond && enableSubSecond  ) {
+        if (showSecond && enableSubSecond) {
 
             svgSubsecondBase?.run {
                 documentWidth = vp.width()
@@ -575,9 +579,9 @@ class ImageInfo {
 
             canvas.save()
 
-            canvas.translate( bcx, bcy )
-            canvas.rotate( hMin )
-            canvas.translate( -bcx, -bcy )
+            canvas.translate(bcx, bcy)
+            canvas.rotate(hMin)
+            canvas.translate(-bcx, -bcy)
 
             renderToCanvas(canvas, vp)
 
@@ -590,16 +594,16 @@ class ImageInfo {
 
             canvas.save()
 
-            canvas.translate( bcx, bcy )
-            canvas.rotate( hHour )
-            canvas.translate( -bcx, -bcy )
+            canvas.translate(bcx, bcy)
+            canvas.rotate(hHour)
+            canvas.translate(-bcx, -bcy)
 
             renderToCanvas(canvas, vp)
 
             canvas.restore()
         }
 
-        if( showSecond && !enableSubSecond ) {
+        if (showSecond && !enableSubSecond) {
             svgSecondHandle?.run {
                 documentWidth = vp.width()
                 documentHeight = vp.height()
@@ -616,7 +620,7 @@ class ImageInfo {
             }
         }
 
-        if( !enableSubSecond  ) {
+        if (!enableSubSecond) {
             svgCenterCircle?.run {
                 documentWidth = vp.width()
                 documentHeight = vp.height()
