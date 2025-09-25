@@ -112,7 +112,7 @@ internal fun updateAppWidget(
     val pxmsz = min( pxmWidth, pxmHeight )
 
     val p = Paint().apply {
-        color = Color.BLUE
+        color = Color.GREEN
         style = Paint.Style.FILL
         isAntiAlias = true
     }
@@ -139,11 +139,7 @@ internal fun updateAppWidget(
     canvas.drawRect( 2f, 2f, pxWidth - 1 , pxHeight - 1, p1 )
 
     val views = RemoteViews(context.packageName, R.layout.app_widget)
-
-    // views.setTextViewText(R.id.appwidget_text, currentTime)
-
     views.setImageViewBitmap( R.id.appwidget_image, bitmap )
-
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
