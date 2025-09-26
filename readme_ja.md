@@ -20,16 +20,15 @@ SVGファイルを用いて時計を表示するデスクトップユーティ�
 # スクリーンショット
 
 - アクティビティ
-- 
-	- ![アクティビティ](screenshot/Screenshot_Activity_1.png)
-	- ![アクティビティ](screenshot/Screenshot_Activity_1.png)
+	- <img src="screenshot/Screenshot_Activity_1.png" width="30%" >
+	- <img src="screenshot/Screenshot_Activity_2.png" width="30%" >
 - ウィジェット登録
-	- ![ウィジェット登録](screenshot/Screenshot_Widget_List.png)
+	- <img src="screenshot/Screenshot_Widget_List.png" width="30%" >
 - ウィジェット
-	- ![A](screenshot/Screenshot_Widget_1.png)
-	- ![B](screenshot/Screenshot_Widget_3.png)
-	- ![C](screenshot/Screenshot_Widget_6.png)
-	- ![D](screenshot/Screenshot_Widget_7.png)
+	- <img src="screenshot/Screenshot_Widget_1.png" width="30%" >
+	- <img src="screenshot/Screenshot_Widget_3.png" width="30%" >
+	- <img src="screenshot/Screenshot_Widget_6.png" width="30%" >
+	- <img src="screenshot/Screenshot_Widget_7.png" width="30%" >
 
 # 導入
 
