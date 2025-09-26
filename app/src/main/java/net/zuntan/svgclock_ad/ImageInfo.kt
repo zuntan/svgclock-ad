@@ -1,22 +1,18 @@
 package net.zuntan.svgclock_ad
 
 import android.graphics.Canvas
-import org.xmlpull.v1.XmlPullParserFactory
-import org.xmlpull.v1.XmlPullParser
-
-import androidx.ink.geometry.ImmutableVec
-import androidx.ink.geometry.MutableAffineTransform
 import androidx.ink.geometry.AffineTransform
 import androidx.ink.geometry.ImmutableAffineTransform
-
-import kotlinx.serialization.*
-import kotlinx.serialization.decodeFromString
-
+import androidx.ink.geometry.ImmutableVec
+import androidx.ink.geometry.MutableAffineTransform
 import com.akuleshov7.ktoml.Toml
-
 import com.caverock.androidsvg.SVG
+import kotlinx.serialization.*
+import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
 import java.time.LocalDateTime
+import kotlin.experimental.and
 import kotlin.math.min
 
 const val NAMESPACE_SVG = "" // ""http://www.w3.org/2000/svg"
@@ -25,6 +21,11 @@ const val NAMESPACE_INKSCAPE = "http://www.inkscape.org/namespaces/inkscape"
 val RE_FLOAT = """[-+]?([0-9]*\.[0-9]+|[0-9]+\.?[0-9]*)([eE][-+]?[0-9]+)?""".toRegex()
 val RE_TRAN =
     """(translate|scale|rotate|skewX|skewY|matrix)\s*\(([^)]+)\)""".toRegex(RegexOption.IGNORE_CASE)
+
+val RE_REPLACE = """\{\{\s*([A-Za-z0-9_]+)\s*\}\}""".toRegex(RegexOption.IGNORE_CASE)
+val RE_SEGMENT_NUM = """seg_(hh|hl|mh|ml|sh|sl)([a-g])""".toRegex(RegexOption.IGNORE_CASE)
+val RE_SEGMENT_AMPM = """seg_(amb|pmb|am|pm)""".toRegex(RegexOption.IGNORE_CASE)
+val RE_SEGMENT_DOT = """seg_dot""".toRegex(RegexOption.IGNORE_CASE)
 
 private fun parseFloatList(value: String?): List<Float>? {
 
@@ -543,6 +544,149 @@ class ImageInfo {
             documentWidth = vp.width()
             documentHeight = vp.height()
             renderToCanvas(canvas, vp)
+        }
+
+        if( srcBaseText != null )
+        {
+            val src = srcBaseText?.replace(RE_REPLACE) { m ->
+
+                val kw = m.groupValues[1].lowercase()
+
+                when( kw ) {
+                    "time_zone" -> {
+                        ""
+                    }
+
+                    "date" -> {
+                        ""
+                    }
+
+                    "time" -> {
+                        ""
+                    }
+
+                    else -> {
+                        var ret: String? =
+                            if( config?.with_text_segment == true )
+                            {
+                                var ret: String? = null
+
+                                ret =
+                                    RE_SEGMENT_NUM.matchEntire(kw)?.let { m ->
+                                        /*
+                                            <g visibility="{{seg_(hh|hl|mh|ml|sh|sl)([a-g])}}"></g>
+                                            ex.
+                                            <g visibility="{{seg_hha}}"></g>
+
+                                            {{seg_xxx}} = "visible" or "hidden"
+
+                                            $1 = (hh|hl|mh|ml|sh|sl)
+                                                hh -> Hour High digit
+                                                hl -> Hour Low digit
+                                                mh -> Minute High digit
+                                                ml -> Minute Low digit
+                                                sh -> Second High digit
+                                                sl -> Second Low digit
+
+                                            $2 = a,b,c,d,e,f,g
+                                                segment https://en.wikipedia.org/wiki/Seven-segment_display#/media/File:7_Segment_Display_with_Labeled_Segments.svg
+                                                   =a=
+                                                |f|   |b|
+                                                   =g=
+                                                |e|   |c|
+                                                   =d=
+                                        */
+
+                                        val m1 = m.groupValues[1]
+                                        val m2 = m.groupValues[2]
+
+                                        val num = when( m1 ) {
+                                            "hh" -> { t.hour / 10 }
+                                            "hl" -> { t.hour % 10 }
+                                            "mh" -> { t.minute / 10 }
+                                            "ml" -> { t.minute % 10 }
+                                            "sh" -> { t.second / 10 }
+                                            "sl" -> { t.second % 10 }
+                                            else -> { 0 }
+                                        }
+
+                                        val bOn: Byte = when( num )
+                                        {
+                                            0 -> 0x7e
+                                            1 -> 0x30
+                                            2 -> 0x6d
+                                            3 -> 0x79
+                                            4 -> 0x33
+                                            5 -> 0x5b
+                                            6 -> 0x5f
+                                            7 -> 0x70
+                                            8 -> 0x7f
+                                            9 -> 0x7b
+                                            else -> 0x00
+                                        }
+
+                                        val bMask: Byte = when(m2)
+                                        {
+                                            "a" -> ( 0x1 shl 6 ).toByte()
+                                            "b" -> ( 0x1 shl 5 ).toByte()
+                                            "c" -> ( 0x1 shl 4 ).toByte()
+                                            "d" -> ( 0x1 shl 3 ).toByte()
+                                            "e" -> ( 0x1 shl 2 ).toByte()
+                                            "f" -> ( 0x1 shl 1 ).toByte()
+                                            "g" -> ( 0x1 shl 0 ).toByte()
+                                            else -> 0x0
+                                        }
+
+                                        if( bOn.and( bMask ) != 0x00.toByte() )
+                                        {
+                                            "visible"
+                                        }
+                                        else
+                                        {
+                                            "hidden"
+                                        }
+                                    }
+
+                                ret = ret?:
+                                    RE_SEGMENT_AMPM.matchEntire(kw)?.let { m ->
+                                        val isPm = t.hour >= 12
+                                        val m1 = m.groupValues[1]
+
+                                        if(     ! isPm && m1 == "am"
+                                            ||   isPm && m1 == "pm"
+                                            ||  m1 == "amb"
+                                            ||  m1 == "pmb")
+                                        {
+                                            "visible"
+                                        }
+                                        else
+                                        {
+                                            "hidden"
+                                        }
+                                    }
+
+                                ret = ret?:
+                                    RE_SEGMENT_DOT.matchEntire(kw)?.let { m ->
+                                        val on = t.nano < ( 1_000_000_000 / 2 )
+                                        if( on ) { "visible" } else { "hidden" }
+                                    }
+
+
+                                ret
+                            } else {
+                                null
+                            }
+
+                        ret?:""
+                    }
+                }
+            }
+
+            SVG.getFromString(src )?.run {
+                documentWidth = vp.width()
+                documentHeight = vp.height()
+                renderToCanvas(canvas, vp)
+            }
         }
 
         if (showSecond && enableSubSecond) {

@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
+import android.app.NotificationManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -73,10 +74,11 @@ class MainActivity : AppCompatActivity() {
             isChecked = app.serviceOn
 
             setOnCheckedChangeListener { _, isToggled ->
-                val serviceIntent = Intent(this.context, AppService::class.java)
+                val serviceIntent = Intent( application, AppService::class.java)
 
                 if (isToggled) {
-                    startService(serviceIntent)
+                    startForegroundService( serviceIntent)
+                    // startService(serviceIntent)
                 } else {
                     stopService(serviceIntent)
                 }
@@ -145,5 +147,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Logcat.d( "onResume" )
+/*
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
+ */
     }
 }
