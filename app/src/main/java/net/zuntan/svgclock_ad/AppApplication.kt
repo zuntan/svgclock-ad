@@ -2,6 +2,7 @@ package net.zuntan.svgclock_ad
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.SystemClock
 import androidx.preference.PreferenceManager
@@ -95,7 +96,12 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
     fun drawTo(canvas: Canvas, appWidgetId: Int) {
         synchronized(this)
         {
-            imageInfo?.drawTo(canvas)
+            if( imageInfo == null ) {
+                canvas.drawBitmap( BitmapFactory.decodeResource( this.resources, R.drawable.logo128_gray ), 0f, 0f, null )
+            }
+            else {
+                imageInfo?.drawTo(canvas)
+            }
 
             val t = (SystemClock.uptimeMillis() / 1000) * 1000
             imageUpdate.put(appWidgetId, t)

@@ -15,6 +15,7 @@ import android.os.BatteryManager
 import android.os.IBinder
 import android.util.Log
 import android.hardware.display.DisplayManager
+import android.os.Build
 import android.view.Display
 import androidx.core.app.NotificationCompat
 
@@ -67,9 +68,8 @@ class AppService : Service() {
 
         const val ACTION_TO_STATE_UPDATE = "ACTION_TO_STATE_UPDATE"
 
-        const val NOTIFICATION_ID = 1
-        const val NOTIFICATION_CHANNEL_ID = "ForegroundServiceChannel"
-        const val NOTIFICATION_CHANNEL_NAME = "Foreground Service Channel"
+        const val NOTIFICATION_ID = 101
+        const val NOTIFICATION_CHANNEL_ID = "ClockServiceForWidgetChannel"
     }
 
     private val disposables = CompositeDisposable()
@@ -87,17 +87,33 @@ class AppService : Service() {
 
         val serviceChannel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
-            NOTIFICATION_CHANNEL_NAME,
+            getString(R.string.notification_content_title ),
             NotificationManager.IMPORTANCE_DEFAULT
         )
-        val manager = getSystemService(NotificationManager::class.java)
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(serviceChannel)
+
+        val intent = Intent(this, MainActivity::class.java)
+
+        // PendingIntentを作成
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+        )
 
         val notification: Notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setContentTitle(getString(R.string.notification_content_title))
-            //.setContentText( getString( R.string.notification_content_text ) )
+            .setContentText( getString( R.string.notification_content_text ) )
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(false)
             .build()
 
         startForeground(NOTIFICATION_ID, notification)

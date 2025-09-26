@@ -18,9 +18,14 @@
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
 
-    <string name="notification_content_title">Clock Service running...</string>
-    <string name="notification_content_text">The service is running...</string>
-    <string name="switch_clock_service">Clock Service</string>
+    <string name="notification_content_title">Clock Service for Widget</string>
+    <string name="notification_content_text">running...</string>
+    <string name="switch_clock_service">Clock Service for Widget</string>
 
+    <string name="notification_enabled">Notifications enabled</string>
+    <string name="notification_enable_error">Notifications have been denied. Please change your settings.</string>
+
+    <string name="zoom_clock_size">To enlarge the clock, touch the clock.</string>
+    <string name="restore_clock_size">To restore the clock size, touch the clock again.</string>
 
 </resources>

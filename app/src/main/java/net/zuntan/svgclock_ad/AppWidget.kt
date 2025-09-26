@@ -34,8 +34,6 @@ class AppWidget : AppWidgetProvider() {
                 updateAppWidget(context, appWidgetManager, appWidgetId)
             }
         }
-
-        // val myApplication = context.applicationContext as MyApplication
     }
 
     override fun onUpdate(

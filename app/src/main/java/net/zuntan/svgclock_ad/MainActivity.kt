@@ -1,17 +1,22 @@
 package net.zuntan.svgclock_ad
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.view.View
 import android.widget.Switch
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,16 +50,20 @@ class MainActivity : AppCompatActivity() {
         val cv = findViewById<View>(R.id.clockView)
         val l2nd = findViewById<LinearLayout>(R.id.layout2nd)
 
-        cv?.apply {
-            setOnClickListener {
-                if (l2nd.isGone) {
-                    l2nd?.visibility = View.VISIBLE
-                    updateOrientation(resources.configuration.orientation)
-                } else {
-                    l2nd?.visibility = View.GONE
-                    cv.layoutParams.height = LinearLayout.LayoutParams.MATCH_PARENT
-                    cv.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
-                }
+        cv.setOnClickListener {
+            if (l2nd.isGone) {
+                l2nd?.visibility = View.VISIBLE
+                updateOrientation(resources.configuration.orientation)
+            } else {
+                l2nd?.visibility = View.GONE
+                cv.layoutParams.height = LinearLayout.LayoutParams.MATCH_PARENT
+                cv.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
+
+                Toast.makeText(
+                    this,
+                    R.string.restore_clock_size,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
 
@@ -71,6 +80,41 @@ class MainActivity : AppCompatActivity() {
                     stopService(serviceIntent)
                 }
             }
+        }
+
+        checkNotificationPermission()
+    }
+
+    private fun checkNotificationPermission() {
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+
+        val permCheckOk = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!permCheckOk) {
+            val requestPermissionLauncher =
+                registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                    if (isGranted) {
+                        Toast.makeText(
+                            this,
+                            R.string.notification_enabled,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            R.string.notification_enable_error,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
