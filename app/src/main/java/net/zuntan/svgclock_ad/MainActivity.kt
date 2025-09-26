@@ -5,20 +5,18 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Switch
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.work.*
-import java.util.concurrent.TimeUnit
+import androidx.core.view.isGone
 
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val CLOCKVIEW_SIZE_DP : Int = 200
+        const val CLOCKVIEW_SIZE_DP: Int = 200
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,18 +40,17 @@ class MainActivity : AppCompatActivity() {
         pref.registerOnSharedPreferenceChangeListener( this )
         */
 
-        updateOrientation( getResources().getConfiguration().orientation )
+        updateOrientation(getResources().configuration.orientation)
 
-        val cv = findViewById<View>( R.id.clockView )
-        val l2nd = findViewById<LinearLayout>( R.id.layout2nd )
+        val cv = findViewById<View>(R.id.clockView)
+        val l2nd = findViewById<LinearLayout>(R.id.layout2nd)
 
         cv?.apply {
             setOnClickListener {
-                if( l2nd.visibility == View.GONE ) {
+                if (l2nd.isGone) {
                     l2nd?.visibility = View.VISIBLE
-                    updateOrientation( getResources().getConfiguration().orientation )
-                }
-                else {
+                    updateOrientation(resources.configuration.orientation)
+                } else {
                     l2nd?.visibility = View.GONE
                     cv.layoutParams.height = LinearLayout.LayoutParams.MATCH_PARENT
                     cv.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
@@ -61,46 +58,44 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Switch>( R.id.swService )?.apply {
+        findViewById<Switch>(R.id.swService)?.apply {
             val app = applicationContext as AppApplication
             isChecked = app.serviceOn
 
             setOnCheckedChangeListener { _, isToggled ->
                 val serviceIntent = Intent(this.context, AppService::class.java)
 
-                if( isToggled ) {
+                if (isToggled) {
                     startService(serviceIntent)
-                }
-                else {
+                } else {
                     stopService(serviceIntent)
                 }
             }
         }
-   }
+    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        updateOrientation( newConfig.orientation )
+        updateOrientation(newConfig.orientation)
     }
 
-    fun updateOrientation( orientation : Int )
-    {
-        val bl = findViewById<LinearLayout>( R.id.baseLayout )
-        val cv = findViewById<ClockView>( R.id.clockView )
+    fun updateOrientation(orientation: Int) {
+        val bl = findViewById<LinearLayout>(R.id.baseLayout)
+        val cv = findViewById<ClockView>(R.id.clockView)
 
-        when( orientation )
-        {
+        when (orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 bl?.orientation = LinearLayout.VERTICAL
                 cv?.layoutParams?.apply {
-                    width =LinearLayout.LayoutParams.MATCH_PARENT
-                    height = ( CLOCKVIEW_SIZE_DP * resources.displayMetrics.density ).toInt()
+                    width = LinearLayout.LayoutParams.MATCH_PARENT
+                    height = (CLOCKVIEW_SIZE_DP * resources.displayMetrics.density).toInt()
                 }
             }
+
             Configuration.ORIENTATION_LANDSCAPE -> {
                 bl?.orientation = LinearLayout.HORIZONTAL
                 cv?.layoutParams?.apply {
-                    width = ( CLOCKVIEW_SIZE_DP * resources.displayMetrics.density ).toInt()
+                    width = (CLOCKVIEW_SIZE_DP * resources.displayMetrics.density).toInt()
                     height = LinearLayout.LayoutParams.MATCH_PARENT
                 }
             }

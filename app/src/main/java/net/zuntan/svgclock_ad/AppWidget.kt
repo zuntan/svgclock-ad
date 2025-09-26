@@ -9,34 +9,25 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.widget.RemoteViews
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.Build
-import kotlin.math.min
+import androidx.core.graphics.createBitmap
 
 /**
  * Implementation of App Widget functionality.
  */
 class AppWidget : AppWidgetProvider() {
 
-    override fun onReceive(context: Context,  intent:Intent )
-    {
+    override fun onReceive(context: Context, intent: Intent) {
         //Logcat.d( "onReceive" )
         super.onReceive(context, intent)
 
-        if( intent.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE && intent.getExtras() == null )
-        {
-            val appWidgetManager = AppWidgetManager.getInstance(context )
+        if (intent.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE && intent.extras == null) {
+            val appWidgetManager = AppWidgetManager.getInstance(context)
             val appWidgetIds = appWidgetManager.getAppWidgetIds(
-                ComponentName( context, AppWidget::class.java )
+                ComponentName(context, AppWidget::class.java)
             )
 
             for (appWidgetId in appWidgetIds) {
@@ -52,25 +43,24 @@ class AppWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        for (appWidgetId in appWidgetIds)
-        {
+        for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId)
             updateAppWidgetClick(context, appWidgetManager, appWidgetId)
         }
     }
 
     override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
-        Logcat.d( "onDeleted" )
+        Logcat.d("onDeleted")
         super.onDeleted(context, appWidgetIds)
     }
 
     override fun onEnabled(context: Context) {
-        Logcat.d( "onEnabled" )
+        Logcat.d("onEnabled")
         super.onEnabled(context)
     }
 
     override fun onDisabled(context: Context) {
-        Logcat.d( "onDisabled" )
+        Logcat.d("onDisabled")
         super.onDisabled(context)
     }
 
@@ -80,11 +70,12 @@ class AppWidget : AppWidgetProvider() {
         appWidgetId: Int,
         newOptions: Bundle
     ) {
-        Logcat.d( "onAppWidgetOptionsChanged" )
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions )
+        Logcat.d("onAppWidgetOptionsChanged")
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
     }
 }
 
+@Suppress("DEPRECATION")
 internal fun updateAppWidget(
     context: Context,
     appWidgetManager: AppWidgetManager,
@@ -92,18 +83,17 @@ internal fun updateAppWidget(
 ) {
     val app = context.applicationContext as AppApplication
 
-    if( !app.checkUpdate( appWidgetId ) )
-    {
-        Logcat.d( "skip")
+    if (!app.checkUpdate(appWidgetId)) {
+        Logcat.d("skip")
         return
     }
 
     val opt = appWidgetManager.getAppWidgetOptions(appWidgetId)
 
     val minWidth = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
-    val maxWidth = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
     val minHeight = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
-    val maxHeight = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
+    //val maxWidth = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
+    // val maxHeight = opt.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
 
     val metrics = DisplayMetrics()
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -111,16 +101,16 @@ internal fun updateAppWidget(
 
     val pxWidth = minWidth * metrics.density
     val pxHeight = minHeight * metrics.density
-    val pxmWidth = maxWidth * metrics.density
-    val pxmHeight = maxHeight * metrics.density
+    // val pxmWidth = maxWidth * metrics.density
+    // val pxmHeight = maxHeight * metrics.density
 
-    val pxsz = min(pxWidth, pxHeight)
-    val pxmsz = min(pxmWidth, pxmHeight)
+    // val pxsz = min(pxWidth, pxHeight)
+    // val pxmsz = min(pxmWidth, pxmHeight)
 
-    val bitmap = Bitmap.createBitmap(pxWidth.toInt(), pxHeight.toInt(), Bitmap.Config.ARGB_8888)
+    val bitmap = createBitmap(pxWidth.toInt(), pxHeight.toInt())
     val canvas = Canvas(bitmap)
 
-    app.drawTo( canvas, appWidgetId )
+    app.drawTo(canvas, appWidgetId)
 
     val views = RemoteViews(context.packageName, R.layout.app_widget)
     views.setImageViewBitmap(R.id.appwidget_image, bitmap)

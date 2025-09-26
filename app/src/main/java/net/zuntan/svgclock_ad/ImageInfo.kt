@@ -194,7 +194,7 @@ class ImageInfo {
 
         xpp.setInput(java.io.StringReader(srcOrg))
 
-        var evt: Int = xpp.getEventType()
+        var evt: Int = xpp.eventType
 
         while (true) {
             when (evt) {
@@ -256,9 +256,9 @@ class ImageInfo {
 
             xpp.setInput(java.io.StringReader(src))
 
-            var evt: Int = xpp.getEventType()
+            var evt: Int = xpp.eventType
 
-            val affineList: ArrayDeque<AffineTransform> = ArrayDeque<AffineTransform>()
+            val affineList: ArrayDeque<AffineTransform> = ArrayDeque()
 
             while (true) {
                 when (evt) {
@@ -290,7 +290,7 @@ class ImageInfo {
                                 ret = affine.applyTransform(ret)
                             }
 
-                            break;
+                            break
                         }
                     }
 
@@ -334,7 +334,7 @@ class ImageInfo {
 
             xpp.setInput(java.io.StringReader(srcConfig))
 
-            var evt: Int = xpp.getEventType()
+            var evt: Int = xpp.eventType
 
             var flg = -1
 
@@ -412,7 +412,7 @@ class ImageInfo {
         xpp.setInput(java.io.StringReader(srcOrg))
         xpps.setOutput(sw)
 
-        var evt: Int = xpp.getEventType()
+        var evt: Int = xpp.eventType
 
         var found = false
         var depthDisOutput = -1
@@ -425,6 +425,8 @@ class ImageInfo {
                 }
 
                 XmlPullParser.START_DOCUMENT -> {
+
+
                     xpps.startDocument("utf8", true)
                 }
 
@@ -504,8 +506,8 @@ class ImageInfo {
         val dw = sz!!.x
         val dh = sz!!.y
 
-        val zw = cw.toFloat() / dw.toFloat()
-        val zh = ch.toFloat() / dh.toFloat()
+        val zw = cw.toFloat() / dw
+        val zh = ch.toFloat() / dh
 
         val z = min(zw, zh)
 

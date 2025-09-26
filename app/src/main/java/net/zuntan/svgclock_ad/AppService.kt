@@ -1,5 +1,6 @@
 package net.zuntan.svgclock_ad
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,7 +15,6 @@ import android.os.BatteryManager
 import android.os.IBinder
 import android.util.Log
 import android.hardware.display.DisplayManager
-import android.os.Build
 import android.view.Display
 import androidx.core.app.NotificationCompat
 
@@ -36,14 +36,17 @@ class PowerStateReceiver : BroadcastReceiver() {
                 Log.d("PowerStateReceiver", "充電器が接続されました")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
+
             Intent.ACTION_POWER_DISCONNECTED -> {
                 Log.d("PowerStateReceiver", "充電器が切断されました")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
+
             Intent.ACTION_SCREEN_ON -> {
                 Log.d("PowerStateReceiver", "ACTION_SCREEN_ON")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
+
             Intent.ACTION_SCREEN_OFF -> {
                 Log.d("PowerStateReceiver", "ACTION_SCREEN_OFF")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
@@ -75,38 +78,31 @@ class AppService : Service() {
         return null
     }
 
+    @SuppressLint("ForegroundServiceType")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        Log.d( "MyService", "onStartCommand %s:%s:%s".format( intent, flags, startId ) )
+        Log.d("MyService", "onStartCommand %s:%s:%s".format(intent, flags, startId))
 
         setupInterval()
 
-        createNotificationChannel()
+        val serviceChannel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(serviceChannel)
 
-        // フォアグラウンドサービス用の通知を作成
         val notification: Notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle( getString( R.string.notification_content_title ) )
+            .setContentTitle(getString(R.string.notification_content_title))
             //.setContentText( getString( R.string.notification_content_text ) )
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
-        // サービスをフォアグラウンドで開始
         startForeground(NOTIFICATION_ID, notification)
 
         return START_STICKY
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(serviceChannel)
-        }
     }
 
     private lateinit var powerStateReceiver: PowerStateReceiver
@@ -114,7 +110,7 @@ class AppService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        Log.d( "MyService", "onCreate" )
+        Log.d("MyService", "onCreate")
 
         // BroadcastReceiverのインスタンス化
         powerStateReceiver = PowerStateReceiver()
@@ -135,7 +131,7 @@ class AppService : Service() {
     }
 
     override fun onDestroy() {
-        Log.d( "MyService", "onDestroy" )
+        Log.d("MyService", "onDestroy")
         disposables.dispose()
         unregisterReceiver(powerStateReceiver)
         super.onDestroy()
@@ -149,27 +145,26 @@ class AppService : Service() {
         */
     }
 
-    fun setupInterval()
-    {
-        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED ).let {
-                filter -> registerReceiver( null, filter )
-        }
+    fun setupInterval() {
+        val batteryStatus: Intent? = registerReceiver(null,
+            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        )
 
         val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
 
         val isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                 status == BatteryManager.BATTERY_STATUS_FULL
 
-        val pluged: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
+        val plugged: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
 
-        val isPluged: Boolean = pluged == BatteryManager.BATTERY_PLUGGED_AC
+        val isPlugged: Boolean = plugged == BatteryManager.BATTERY_PLUGGED_AC
 
-        val displayManager = getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+        val displayManager = getSystemService(DISPLAY_SERVICE) as DisplayManager
 
         val isOn = displayManager.displays.any { it.state != Display.STATE_OFF }
 
-        val period = if( isOn ) {
-            if (isCharging || isPluged) {
+        val period = if (isOn) {
+            if (isCharging || isPlugged) {
                 INTERVAL_FAST_MS
             } else {
                 INTERVAL_MIDDLE_MS
@@ -178,11 +173,11 @@ class AppService : Service() {
             INTERVAL_SLOW_MS
         }
 
-        Log.d( "MyService", "setupInterval period:%s".format( period ) )
+        Log.d("MyService", "setupInterval period:%s".format(period))
 
         disposables.clear()
 
-        val intent = Intent( this, AppWidget::class.java).apply {
+        val intent = Intent(this, AppWidget::class.java).apply {
             action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
         }
 
@@ -193,10 +188,10 @@ class AppService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        Observable.interval( period, TimeUnit.MILLISECONDS)
-            .subscribeOn( Schedulers.io() )
-            .observeOn(AndroidSchedulers.mainThread() )
-            .timeInterval( TimeUnit.MILLISECONDS )
+        Observable.interval(period, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .timeInterval(TimeUnit.MILLISECONDS)
             .subscribe {
                 //  Log.d( "MyService", "Loop:%s".format( it ) )
                 pendingIntent.send()

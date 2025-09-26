@@ -8,55 +8,46 @@ import android.util.AttributeSet
 import android.view.View
 import kotlin.math.min
 import android.animation.TimeAnimator
-import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 
-import com.caverock.androidsvg.SVG
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.delay
-import kotlin.time.Duration
-
 
 /**
  */
 class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private var stopMovement : Boolean = true
-    private var pTime : Long = 0
-    private var dTime : Long = 0
-    private var imageInfo : ImageInfo? = null
-
-    private var drTime : LocalDateTime? = null
+    private var stopMovement: Boolean = true
+    private var pTime: Long = 0
+    private var dTime: Long = 0
+    private var imageInfo: ImageInfo? = null
 
     private val p = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = Color.DKGRAY
     }
 
-    private val pHour = Paint( Paint.ANTI_ALIAS_FLAG).apply {
+    private val pHour = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = Color.CYAN
         strokeWidth = 15.0f
     }
 
-    private val pMin = Paint( Paint.ANTI_ALIAS_FLAG).apply {
+    private val pMin = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = Color.GREEN
         strokeWidth = 7.0f
     }
 
-    private val pSec = Paint( Paint.ANTI_ALIAS_FLAG).apply {
+    private val pSec = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         color = Color.RED
         strokeWidth = 3.0f
     }
 
     private val ani = TimeAnimator().apply {
-        setDuration( 1000 )
-        setRepeatCount( TimeAnimator.INFINITE )
+        setDuration(1000)
+        repeatCount = TimeAnimator.INFINITE
         setTimeListener { animation, totalTime, deltaTime ->
             this@ClockView.onTimeUpdate(
                 totalTime
@@ -88,7 +79,7 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
 
         a.recycle()
 
-        setupBySharedPreference( PreferenceManager.getDefaultSharedPreferences( this.context ), null )
+        setupBySharedPreference(PreferenceManager.getDefaultSharedPreferences(this.context), null)
 
         dTime = 125
     }
@@ -97,54 +88,56 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
         super.onAttachedToWindow()
         pTime = 0
         ani.start()
-        PreferenceManager.getDefaultSharedPreferences( this.context ).registerOnSharedPreferenceChangeListener( this )
+        PreferenceManager.getDefaultSharedPreferences(this.context)
+            .registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         ani.pause()
-        PreferenceManager.getDefaultSharedPreferences( this.context ).unregisterOnSharedPreferenceChangeListener( this )
+        PreferenceManager.getDefaultSharedPreferences(this.context)
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(
         sharedPreferences: SharedPreferences?,
         key: String?
     ) {
-        setupBySharedPreference( sharedPreferences, key )
+        setupBySharedPreference(sharedPreferences, key)
     }
 
-    fun setupBySharedPreference( sharedPreferences: SharedPreferences?, key: String? )
-    {
+    fun setupBySharedPreference(sharedPreferences: SharedPreferences?, key: String?) {
         stopMovement = true
 
-        sharedPreferences?.let{
+        sharedPreferences?.let {
 
-            if( listOf( "confPresetTheme", "confEnableCustomTheme", "confCustomThemeLocation", null ).any { it == key } )
-            {
-                val cect = sharedPreferences?.getBoolean( "confEnableCustomTheme", false )
+            if (listOf(
+                    "confPresetTheme",
+                    "confEnableCustomTheme",
+                    "confCustomThemeLocation",
+                    null
+                ).any { it -> it == key }
+            ) {
+                val cect = sharedPreferences.getBoolean("confEnableCustomTheme", false)
 
-                if(cect == true)
-                {
+                if (cect) {
 
-                }
-                else
-                {
-                    val cpt = sharedPreferences?.getString( "confPresetTheme", null )
-                    var theme = LIST_PRESET_THEME.find { it.second == cpt }
+                } else {
+                    val cpt = sharedPreferences.getString("confPresetTheme", null)
+                    var theme = LIST_PRESET_THEME.find { it -> it.second == cpt }
 
-                    if( theme == null )
-                    {
+                    if (theme == null) {
                         theme = LIST_PRESET_THEME.first()
                     }
 
-                    imageInfo = ImageInfo( resources.openRawResource( theme.third ) )
+                    imageInfo = ImageInfo(resources.openRawResource(theme.third))
                 }
             }
 
             imageInfo?.apply {
-                showSecond = it.getBoolean( "confShowSecond", true )
-                enableSubSecond = it.getBoolean( "confEnableSubSecond", false )
-                enableSecondSmoothly = it.getBoolean( "confEnableSecondSmoothly", true )
+                showSecond = it.getBoolean("confShowSecond", true)
+                enableSubSecond = it.getBoolean("confEnableSubSecond", false)
+                enableSecondSmoothly = it.getBoolean("confEnableSecondSmoothly", true)
             }
         }
 
@@ -160,59 +153,63 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
     ) {
         val d = totalTime - pTime
 
-        if( d >= dTime )
-        {
+        if (d >= dTime) {
             pTime = totalTime
 
-            if( !stopMovement ) {
+            if (!stopMovement) {
                 invalidate()
             }
         }
     }
 
     private fun onDrawB(canvas: Canvas) {
-        imageInfo?.drawTo( canvas )
+        imageInfo?.drawTo(canvas)
     }
 
+    @Suppress("unused")
     private fun onDrawA(canvas: Canvas) {
 
-        var t = LocalDateTime.now().toLocalTime()
+        val t = LocalDateTime.now().toLocalTime()
         val s = t.toSecondOfDay().toFloat()
 
-        val hHour = s / ( 12f * 60f * 60f ) * 360f
-        val hMin  = s / ( 60f * 60f ) * 360f
+        val hHour = s / (12f * 60f * 60f) * 360f
+        val hMin = s / (60f * 60f) * 360f
 
-        val ms = t.toNanoOfDay().toFloat() / 1_000_000f
+        val sd: Float = if (false) {
+            val ns1 = t.toNanoOfDay()
+            val ns0 = t.toSecondOfDay().toLong() * 1_000_000_000
+            ((ns1 - ns0).toDouble() / 1_000_000_000).toFloat()
+        } else {
+            0.0f
+        }
 
-        val sd : Float = if( false ) { ( ms / 1000.0f ) % 1 } else { 0.0f }
-
-        val hSec =  ( ( ( t.second ).toFloat() + sd ) / 60 ) * 360.0f
+        val hSec = (((t.second).toFloat() + sd) / 60) * 360.0f
 
         val cw = width - paddingLeft - paddingRight
         val ch = height - paddingTop - paddingBottom
-        val csz = min( cw, ch ).toFloat()
+        val csz = min(cw, ch).toFloat()
 
         val x0 = width.toFloat() / 2
         val y0 = height.toFloat() / 2
 
-        canvas.drawCircle( x0, y0, csz / 2, p )
+        canvas.drawCircle(x0, y0, csz / 2, p)
 
         canvas.save()
-        canvas.translate( x0, y0 )
-        canvas.rotate( hHour )
-        canvas.drawLine( 0.0f, 0.0f, 0.0f, -y0 * .5f, pHour )
+        canvas.translate(x0, y0)
+        canvas.rotate(hHour)
+        canvas.drawLine(0.0f, 0.0f, 0.0f, -y0 * .5f, pHour)
         canvas.restore()
 
         canvas.save()
-        canvas.translate( x0, y0 )
-        canvas.rotate( hMin )
-        canvas.drawLine( 0.0f, 0.0f, 0.0f, -y0 * .9f, pMin )
+        canvas.translate(x0, y0)
+        canvas.rotate(hMin)
+        canvas.drawLine(0.0f, 0.0f, 0.0f, -y0 * .9f, pMin)
         canvas.restore()
 
         canvas.save()
-        canvas.translate( x0, y0 )
-        canvas.rotate( hSec )
-        canvas.drawLine( 0.0f, 0.0f, 0.0f, -y0, pSec )
+        canvas.translate(x0, y0)
+        canvas.rotate(hSec)
+        canvas.drawLine(0.0f, 0.0f, 0.0f, -y0, pSec)
         canvas.restore()
     }
 

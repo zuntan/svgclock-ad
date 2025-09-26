@@ -5,20 +5,14 @@ import android.content.SharedPreferences
 import android.graphics.Canvas
 import android.os.SystemClock
 import androidx.preference.PreferenceManager
-import java.time.Duration
-import java.time.LocalDateTime
 import kotlin.synchronized
 
-class AppApplication: Application(), SharedPreferences.OnSharedPreferenceChangeListener {
+class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private var imageInfo: ImageInfo? = null
-    private val imageUpdate = HashMap< Int, Long >()
+    private val imageUpdate = HashMap<Int, Long>()
 
     var serviceOn: Boolean = false
-        get() = field
-        set(value) {
-            field = value
-        }
 
     override fun onCreate() {
         super.onCreate()
@@ -27,7 +21,7 @@ class AppApplication: Application(), SharedPreferences.OnSharedPreferenceChangeL
         PreferenceManager.getDefaultSharedPreferences(this)
             .registerOnSharedPreferenceChangeListener(this)
 
-        setupBySharedPreference( PreferenceManager.getDefaultSharedPreferences( this ), null )
+        setupBySharedPreference(PreferenceManager.getDefaultSharedPreferences(this), null)
     }
 
     override fun onSharedPreferenceChanged(
@@ -39,7 +33,7 @@ class AppApplication: Application(), SharedPreferences.OnSharedPreferenceChangeL
 
     fun setupBySharedPreference(sharedPreferences: SharedPreferences?, key: String?) {
 
-        synchronized( this )
+        synchronized(this)
         {
             Logcat.d("setupBySharedPreference")
 
@@ -50,15 +44,15 @@ class AppApplication: Application(), SharedPreferences.OnSharedPreferenceChangeL
                         "confEnableCustomTheme",
                         "confCustomThemeLocation",
                         null
-                    ).any { it == key }
+                    ).any { it -> it == key }
                 ) {
-                    val cect = sharedPreferences?.getBoolean("confEnableCustomTheme", false)
+                    val cect = sharedPreferences.getBoolean("confEnableCustomTheme", false)
 
-                    if (cect == true) {
+                    if (cect) {
 
                     } else {
-                        val cpt = sharedPreferences?.getString("confPresetTheme", null)
-                        var theme = LIST_PRESET_THEME.find { it.second == cpt }
+                        val cpt = sharedPreferences.getString("confPresetTheme", null)
+                        var theme = LIST_PRESET_THEME.find { it -> it.second == cpt }
 
                         if (theme == null) {
                             theme = LIST_PRESET_THEME.first()
@@ -77,33 +71,34 @@ class AppApplication: Application(), SharedPreferences.OnSharedPreferenceChangeL
         }
     }
 
-    fun checkUpdate( appWidgetId: Int ): Boolean {
+    fun checkUpdate(appWidgetId: Int): Boolean {
 
         synchronized(this)
         {
             imageInfo?.run {
-                if( enableSecondSmoothly ) { return true }
+                if (enableSecondSmoothly) {
+                    return true
+                }
             }
 
-            val tp = imageUpdate.get( appWidgetId )
-            if( tp == null ) return true
+            val tp = imageUpdate.get(appWidgetId)
+            if (tp == null) return true
 
             val t = SystemClock.uptimeMillis()
 
-            if( t - tp > 750 ) return true
+            if (t - tp > 750) return true
         }
 
         return false
     }
 
-    fun drawTo( canvas: Canvas, appWidgetId: Int )
-    {
-        synchronized( this )
+    fun drawTo(canvas: Canvas, appWidgetId: Int) {
+        synchronized(this)
         {
-            imageInfo?.drawTo( canvas )
+            imageInfo?.drawTo(canvas)
 
-            val t = ( SystemClock.uptimeMillis() / 1000 ) * 1000
-            imageUpdate.put( appWidgetId, t )
+            val t = (SystemClock.uptimeMillis() / 1000) * 1000
+            imageUpdate.put(appWidgetId, t)
         }
     }
 

@@ -19,14 +19,13 @@ object Logcat {
     private fun println(level: Int, t: Throwable?, message: String?, args: Array<out Any?>) {
         if (!isEnabled) return
 
-        val element = Throwable().stackTrace.firstOrNull { it.className !in ignoreClassNames } ?: return
+        val element =
+            Throwable().stackTrace.firstOrNull { it.className !in ignoreClassNames } ?: return
         val tag = element.className.extractSimpleClassName()
         val m =
-            if ( message == null )
-            {
+            if (message == null) {
                 "<null>"
-            }
-            else if (message.isEmpty() || args.isEmpty()) {
+            } else if (message.isEmpty() || args.isEmpty()) {
                 message
             } else {
                 message.format(*args)
@@ -48,15 +47,19 @@ object Logcat {
     fun d(message: String?, vararg args: Any?) {
         println(Log.DEBUG, null, message, args)
     }
+
     fun d(message: String?) {
         println(Log.DEBUG, null, message, emptyArray())
     }
+
     fun d(t: Throwable?, message: String?, vararg args: Any?) {
         println(Log.DEBUG, t, message, args)
     }
+
     fun d(t: Throwable?, message: String?) {
         println(Log.DEBUG, t, message, emptyArray())
     }
+
     fun d(t: Throwable?) {
         println(Log.DEBUG, t, "", emptyArray())
     }
@@ -66,15 +69,19 @@ object Logcat {
     fun w(message: String?, vararg args: Any?) {
         println(Log.WARN, null, message, args)
     }
+
     fun w(message: String?) {
         println(Log.WARN, null, message, emptyArray())
     }
+
     fun w(t: Throwable?, message: String?, vararg args: Any?) {
         println(Log.WARN, t, message, args)
     }
+
     fun w(t: Throwable?, message: String?) {
         println(Log.WARN, t, message, emptyArray())
     }
+
     fun w(t: Throwable?) {
         println(Log.WARN, t, "", emptyArray())
     }
@@ -84,15 +91,19 @@ object Logcat {
     fun e(message: String?, vararg args: Any?) {
         println(Log.ERROR, null, message, args)
     }
+
     fun e(message: String?) {
         println(Log.ERROR, null, message, emptyArray())
     }
+
     fun e(t: Throwable?, message: String?, vararg args: Any?) {
         println(Log.ERROR, t, message, args)
     }
+
     fun e(t: Throwable?, message: String?) {
         println(Log.ERROR, t, message, emptyArray())
     }
+
     fun e(t: Throwable?) {
         println(Log.ERROR, t, "", emptyArray())
     }
