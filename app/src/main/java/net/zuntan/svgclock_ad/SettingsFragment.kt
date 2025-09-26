@@ -67,6 +67,30 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
                 setValueIndex(0)
             }
         }
+
+        val app = context?.let { it.applicationContext as AppApplication }
+
+        app?.let {
+
+            it.onThemeChanged = object : ThemeChangedHandler {
+                override fun onThemeChanged() {
+
+                    for (x in arrayOf(
+                        "confShowSecond", "confEnableSecondSmoothly",
+                    )) {
+                        findPreference<Preference>(x)?.isEnabled = it.haveSecondHandle()
+                    }
+
+                    for (x in arrayOf(
+                        "confEnableSubSecond"
+                    )) {
+                        findPreference<Preference>(x)?.isEnabled = it.haveSubSecond()
+                    }
+                }
+            }
+
+            it.onThemeChanged?.onThemeChanged()
+        }
     }
 
     override fun onPreferenceChange(
@@ -74,6 +98,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         newValue: Any?
     ): Boolean {
         // Logcat.d( "K:%s V:%s", preference.key, newValue )
+
         listener?.let {
             return it.onPreferenceChange(preference, newValue)
         }

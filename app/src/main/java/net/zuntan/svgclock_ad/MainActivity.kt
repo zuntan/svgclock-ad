@@ -2,6 +2,7 @@ package net.zuntan.svgclock_ad
 
 import android.Manifest
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build

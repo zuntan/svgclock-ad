@@ -8,10 +8,16 @@ import android.os.SystemClock
 import androidx.preference.PreferenceManager
 import kotlin.synchronized
 
+interface ThemeChangedHandler {
+    fun onThemeChanged()
+}
+
 class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private var imageInfo: ImageInfo? = null
     private val imageUpdate = HashMap<Int, Long>()
+
+    var onThemeChanged: ThemeChangedHandler? = null
 
     var serviceOn: Boolean = false
 
@@ -67,10 +73,15 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
                     showSecond = it.getBoolean("confShowSecond", true)
                     enableSubSecond = it.getBoolean("confEnableSubSecond", false)
                     enableSecondSmoothly = it.getBoolean("confEnableSecondSmoothly", true)
+
+                    onThemeChanged?.onThemeChanged()
                 }
             }
         }
     }
+
+    fun haveSecondHandle(): Boolean = ( imageInfo?.srcSecondHandle != null )
+    fun haveSubSecond(): Boolean = ( imageInfo?.srcSubsecondBase != null && imageInfo?.srcSubsecondHandle != null )
 
     fun checkUpdate(appWidgetId: Int): Boolean {
 
@@ -107,5 +118,6 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
             imageUpdate.put(appWidgetId, t)
         }
     }
+
 
 }
