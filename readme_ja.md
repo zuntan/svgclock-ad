@@ -17,6 +17,20 @@ SVGファイルを用いて時計を表示するデスクトップユーティ�
 	- 本アプリも、**ユーザーがウィジェット更新用サービスをオンにする**ことで、秒未満での描画処理を実装しています。
 		- 今後も研究します。
 
+# スクリーンショット
+
+- アクティビティ
+- 
+	- ![アクティビティ](screenshot/Screenshot_Activity_1.png)
+	- ![アクティビティ](screenshot/Screenshot_Activity_1.png)
+- ウィジェット登録
+	- ![ウィジェット登録](screenshot/Screenshot_Widget_List.png)
+- ウィジェット
+	- ![A](screenshot/Screenshot_Widget_1.png)
+	- ![B](screenshot/Screenshot_Widget_3.png)
+	- ![C](screenshot/Screenshot_Widget_6.png)
+	- ![D](screenshot/Screenshot_Widget_7.png)
+
 # 導入
 
 

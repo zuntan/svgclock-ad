@@ -17,6 +17,20 @@ The original svgclock-rs is [here](https://github.com/zuntan/svgclock-rs).
     - This app implements sub-second drawing processing by **requiring users to enable the widget update service**.
 		- We will continue researching this.
 
+# Screenshot
+
+- Activity
+- 
+    - ![Activity](screenshot/Screenshot_Activity_1.png)
+    - ![Activity](screenshot/Screenshot_Activity_1.png)
+- Widget Registration
+    - ![Widget Registration](screenshot/Screenshot_Widget_List.png)
+- Widget
+	- ![A](screenshot/Screenshot_Widget_1.png)
+    - ![B](screenshot/Screenshot_Widget_3.png)
+    - ![C](screenshot/Screenshot_Widget_6.png)
+    - ![D](screenshot/Screenshot_Widget_7.png)
+
 # Installation
 
 Please download the latest binary from the [release page](https://github.com/zuntan/svgclock-ad/releases).
