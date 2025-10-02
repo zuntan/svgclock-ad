@@ -62,9 +62,8 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxjava:3.1.5")
     // RxKotlin
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
-    // AndroidでのUI操作に必要（メインスレッドへの切り替え用）
+    // rxandroid
     implementation("io.reactivex.rxjava3:rxandroid:3.0.0")
-
 
     testImplementation(libs.junit)
     testImplementation("kxml2:kxml2:2.3.0")
