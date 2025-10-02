@@ -17,6 +17,11 @@ The original svgclock-rs is [here](https://github.com/zuntan/svgclock-rs).
     - This app implements sub-second drawing processing by **requiring users to enable the widget update service**.
 		- We will continue researching this.
 
+  
+# Caution 
+
+This program's widget updates its display every less than one second. This can cause the battery to drain more quickly than when the device is not in use.
+
 # Screenshot
 
 - Activity
