@@ -83,6 +83,11 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
     fun haveSecondHandle(): Boolean = ( imageInfo?.srcSecondHandle != null )
     fun haveSubSecond(): Boolean = ( imageInfo?.srcSubsecondBase != null && imageInfo?.srcSubsecondHandle != null )
 
+    private fun getRoundClock( ms: Long ): Long
+    {
+        return ( ms / 500 ) * 500
+    }
+
     fun checkUpdate(appWidgetId: Int): Boolean {
 
         synchronized(this)
@@ -96,9 +101,7 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
             val tp = imageUpdate.get(appWidgetId)
             if (tp == null) return true
 
-            val t = SystemClock.uptimeMillis()
-
-            if (t - tp > 750) return true
+            if( getRoundClock( SystemClock.uptimeMillis() ) != getRoundClock(tp ) ) return true
         }
 
         return false
@@ -114,10 +117,7 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
                 imageInfo?.drawTo(canvas)
             }
 
-            val t = (SystemClock.uptimeMillis() / 1000) * 1000
-            imageUpdate.put(appWidgetId, t)
+            imageUpdate.put(appWidgetId, getRoundClock( SystemClock.uptimeMillis() ) )
         }
     }
-
-
 }

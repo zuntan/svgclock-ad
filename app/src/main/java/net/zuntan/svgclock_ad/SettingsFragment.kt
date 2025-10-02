@@ -16,7 +16,8 @@ val LIST_PRESET_THEME = listOf(
     Triple(4, makeConfPresetThemeValue(4), R.raw.clock_theme_4),
     Triple(5, makeConfPresetThemeValue(5), R.raw.clock_theme_5),
     Triple(6, makeConfPresetThemeValue(6), R.raw.clock_theme_6),
-    Triple(7, makeConfPresetThemeValue(7), R.raw.clock_theme_7)
+    Triple(7, makeConfPresetThemeValue(7), R.raw.clock_theme_7),
+    Triple(8, makeConfPresetThemeValue(8), R.raw.clock_theme_8),
 )
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {

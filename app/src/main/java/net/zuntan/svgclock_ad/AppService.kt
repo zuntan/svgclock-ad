@@ -16,6 +16,7 @@ import android.os.IBinder
 import android.util.Log
 import android.hardware.display.DisplayManager
 import android.os.Build
+import android.os.SystemClock
 import android.view.Display
 import androidx.core.app.NotificationCompat
 
@@ -62,9 +63,9 @@ class AppService : Service() {
 
     companion object {
 
-        const val INTERVAL_FAST_MS = 100L
-        const val INTERVAL_MIDDLE_MS = 200L
-        const val INTERVAL_SLOW_MS = 5000L
+        const val INTERVAL_FAST_MS = 125L
+        const val INTERVAL_MIDDLE_MS = 250L
+        const val INTERVAL_SLOW_MS = 10000L
 
         const val ACTION_TO_STATE_UPDATE = "ACTION_TO_STATE_UPDATE"
 
@@ -88,14 +89,14 @@ class AppService : Service() {
         val serviceChannel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             getString(R.string.notification_content_title ),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_LOW
         )
+
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(serviceChannel)
 
         val intent = Intent(this, MainActivity::class.java)
 
-        // PendingIntentを作成
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
@@ -128,10 +129,8 @@ class AppService : Service() {
 
         Log.d("MyService", "onCreate")
 
-        // BroadcastReceiverのインスタンス化
         powerStateReceiver = PowerStateReceiver()
 
-        // IntentFilterで監視するアクションを指定
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_POWER_CONNECTED)
             addAction(Intent.ACTION_POWER_DISCONNECTED)
@@ -139,7 +138,6 @@ class AppService : Service() {
             addAction(Intent.ACTION_SCREEN_OFF)
         }
 
-        // レシーバーを動的に登録
         registerReceiver(powerStateReceiver, filter)
 
         val app = applicationContext as AppApplication
@@ -209,7 +207,6 @@ class AppService : Service() {
             .observeOn(AndroidSchedulers.mainThread())
             .timeInterval(TimeUnit.MILLISECONDS)
             .subscribe {
-                //  Log.d( "MyService", "Loop:%s".format( it ) )
                 pendingIntent.send()
             }.addTo(disposables)
     }

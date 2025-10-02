@@ -16,8 +16,7 @@ import android.os.Build
 import androidx.core.graphics.createBitmap
 
 /**
- * Implementation of App Widget functionality.
- */
+*/
 class AppWidget : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -82,7 +81,6 @@ internal fun updateAppWidget(
     val app = context.applicationContext as AppApplication
 
     if (!app.checkUpdate(appWidgetId)) {
-        Logcat.d("skip")
         return
     }
 
@@ -97,8 +95,10 @@ internal fun updateAppWidget(
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     windowManager.defaultDisplay.getMetrics(metrics)
 
-    val pxWidth = minWidth * metrics.density
-    val pxHeight = minHeight * metrics.density
+    val scale = 0.9f
+
+    val pxWidth = minWidth * metrics.density * scale
+    val pxHeight = minHeight * metrics.density * scale
     // val pxmWidth = maxWidth * metrics.density
     // val pxmHeight = maxHeight * metrics.density
 
@@ -112,6 +112,7 @@ internal fun updateAppWidget(
 
     val views = RemoteViews(context.packageName, R.layout.app_widget)
     views.setImageViewBitmap(R.id.appwidget_image, bitmap)
+
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
@@ -122,7 +123,6 @@ internal fun updateAppWidgetClick(
 ) {
     val intent = Intent(context, MainActivity::class.java)
 
-    // PendingIntentを作成
     val pendingIntent = PendingIntent.getActivity(
         context,
         0,

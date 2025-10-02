@@ -1,8 +1,9 @@
 package net.zuntan.svgclock_ad
 
 import android.Manifest
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
@@ -18,7 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
-import android.app.NotificationManager
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,6 +68,20 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+        }
+
+        cv.setOnLongClickListener {
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            val provider = ComponentName(this, AppWidget::class.java)
+
+            if (appWidgetManager.isRequestPinAppWidgetSupported) {
+                val successCallback = null
+                appWidgetManager.requestPinAppWidget(provider, null, successCallback)
+            } else {
+                // Toast.makeText(this, "Auto-adding widgets is not supported.", Toast.LENGTH_LONG).show()
+            }
+
+            true
         }
 
         findViewById<Switch>(R.id.swService)?.apply {
