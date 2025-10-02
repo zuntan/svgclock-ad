@@ -1,10 +1,12 @@
 package net.zuntan.svgclock_ad
 
 import android.app.Application
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.SystemClock
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlin.synchronized
 
@@ -53,11 +55,35 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
                         null
                     ).any { it -> it == key }
                 ) {
+                    var done = false
+
                     val cect = sharedPreferences.getBoolean("confEnableCustomTheme", false)
 
                     if (cect) {
 
-                    } else {
+                        try {
+                            val uri = sharedPreferences.getString("confCustomThemeLocation", null )?.toUri()
+
+                            val contentResolver = this.contentResolver
+                            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+                            uri?.let {
+                                contentResolver.takePersistableUriPermission(it, flags)
+                                contentResolver.openInputStream(it).use { inp ->
+                                    inp?.let {
+                                        imageInfo = ImageInfo(it )
+                                        done = true
+                                    }
+                                }
+                            }
+                        }
+                        catch ( e: Exception )
+                        {
+                            Logcat.d( e )
+                        }
+                    }
+
+                    if( !done ) {
                         val cpt = sharedPreferences.getString("confPresetTheme", null)
                         var theme = LIST_PRESET_THEME.find { it -> it.second == cpt }
 

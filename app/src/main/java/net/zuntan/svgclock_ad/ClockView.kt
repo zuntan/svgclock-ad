@@ -8,10 +8,14 @@ import android.util.AttributeSet
 import android.view.View
 import kotlin.math.min
 import android.animation.TimeAnimator
+import android.content.Intent
 import java.time.LocalDateTime
 
 import android.content.SharedPreferences
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
+import com.caverock.androidsvg.SVG
+import kotlin.let
 
 /**
  */
@@ -118,11 +122,36 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
                     null
                 ).any { it -> it == key }
             ) {
+                var done = false
+
                 val cect = sharedPreferences.getBoolean("confEnableCustomTheme", false)
 
                 if (cect) {
 
-                } else {
+                    try {
+                        val uri = sharedPreferences.getString("confCustomThemeLocation", null )?.toUri()
+
+                        val contentResolver = this.context.contentResolver
+                        val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+                        uri?.let {
+                            contentResolver.takePersistableUriPermission(it, flags)
+                            contentResolver.openInputStream(it).use { inp ->
+                                inp?.let {
+                                    imageInfo = ImageInfo(it )
+                                    done = true
+                                }
+                            }
+                        }
+                    }
+                    catch ( e: Exception )
+                    {
+                        sharedPreferences.edit().putBoolean( "confEnableCustomTheme", false ).apply()
+                        Logcat.d( e )
+                    }
+                }
+
+                if( !done ) {
                     val cpt = sharedPreferences.getString("confPresetTheme", null)
                     var theme = LIST_PRESET_THEME.find { it -> it.second == cpt }
 

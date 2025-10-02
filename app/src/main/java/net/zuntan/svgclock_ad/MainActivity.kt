@@ -16,9 +16,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
+import androidx.fragment.app.FragmentContainerView
+import androidx.preference.Preference
+import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreference
+import com.caverock.androidsvg.SVG
+import kotlin.toString
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,16 +44,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        /*
-        val fcv = findViewById<FragmentContainerView>( R.id.fragmentContainerView )
-        val sf = fcv.getFragment<SettingsFragment>()
-        sf.listener = Preference.OnPreferenceChangeListener { preference, newValue ->
-            Logcat.d( "K:%s V:%s", preference.key, newValue )
-            true
-        }
-        val pref = PreferenceManager.getDefaultSharedPreferences( this )
-        pref.registerOnSharedPreferenceChangeListener( this )
-        */
 
         updateOrientation(getResources().configuration.orientation)
 
@@ -96,6 +93,68 @@ class MainActivity : AppCompatActivity() {
                     // startService(serviceIntent)
                 } else {
                     stopService(serviceIntent)
+                }
+            }
+        }
+
+        val that = this
+
+        findViewById<FragmentContainerView>( R.id.fragmentContainerView ).apply {
+            getFragment<SettingsFragment>().apply {
+                listener = Preference.OnPreferenceChangeListener { preference, newValue ->
+
+                    Logcat.d( "K:%s V:%s", preference.key, newValue )
+
+                    if( preference.key == "confCustomThemeLocation" )
+                    {
+                        var ok = false
+
+                        val uri = newValue.toString().toUri()
+                        val contentResolver = requireContext().contentResolver
+                        val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+                        contentResolver.takePersistableUriPermission(uri, flags)
+
+                        try {
+                            contentResolver.openInputStream( uri ).use { inp ->
+                                SVG.getFromInputStream( inp )
+                                ok = true
+                            }
+                        }
+                        catch ( e: Exception )
+                        {
+                            Logcat.d( e )
+                        }
+
+                        Logcat.d( "OK:${ok}" )
+
+                        if( !ok )
+                        {
+                            Toast.makeText(
+                                that,
+                                "The specified file is not an svg file.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        else {
+                            /*
+                            context?.apply {
+                                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this )
+                                sharedPreferences.edit().putBoolean( "confEnableCustomTheme", true ).apply()
+                            }*/
+
+                            findViewById<FragmentContainerView>( R.id.fragmentContainerView ).apply {
+                                getFragment<SettingsFragment>().apply {
+                                    findPreference<SwitchPreference>("confEnableCustomTheme" )?.isChecked = true
+                                }
+                            }
+                        }
+
+                        ok
+                    }
+                    else {
+                        true
+                    }
                 }
             }
         }

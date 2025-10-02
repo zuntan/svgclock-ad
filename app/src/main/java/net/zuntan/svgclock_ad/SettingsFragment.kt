@@ -1,9 +1,16 @@
 package net.zuntan.svgclock_ad
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
+import com.caverock.androidsvg.SVG
+import androidx.core.net.toUri
 
 private fun makeConfPresetThemeValue(no: Int): String {
     return "Theme_%d".format(no)
@@ -20,7 +27,11 @@ val LIST_PRESET_THEME = listOf(
     Triple(8, makeConfPresetThemeValue(8), R.raw.clock_theme_8),
 )
 
-class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, CustomEditTextPreference.DialogCloseListener {
+
+    companion object {
+        const val REQUEST_CODE_DOWNLOADED_IMAGE = 200
+    }
 
     var listener: Preference.OnPreferenceChangeListener? = null
 
@@ -69,6 +80,20 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             }
         }
 
+        findPreference<EditTextPreference>("confCustomThemeLocation")?.apply {
+            setOnPreferenceClickListener {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    type = "image/*"
+                }
+
+                startActivityForResult(intent, REQUEST_CODE_DOWNLOADED_IMAGE )
+
+                true
+            }
+        }
+
         val app = context?.let { it.applicationContext as AppApplication }
 
         app?.let {
@@ -94,15 +119,51 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         }
     }
 
+    var dialogFragment: CustomEditTextPreferenceDialogFragmentCompat? = null
+
+    override fun onActivityResult( requestCode: Int, resultCode: Int, data: Intent? ) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_DOWNLOADED_IMAGE && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { uri ->
+
+                dialogFragment?.setText( uri.toString() )
+            }
+        }
+    }
+
+    override fun onDisplayPreferenceDialog(preference: Preference) {
+
+        if (preference is CustomEditTextPreference) {
+
+            dialogFragment =
+                CustomEditTextPreferenceDialogFragmentCompat.newInstance(preference.key)
+
+            dialogFragment?.setTargetFragment(this, 0)
+            dialogFragment?.show(
+                parentFragmentManager,
+                "androidx.preference.PreferenceFragment.DIALOG" // 標準のタグを使用
+            )
+
+            return
+        }
+
+        super.onDisplayPreferenceDialog(preference)
+    }
+
+    override fun onDialogClosed(key: String, success: Boolean, newValue: String?) {
+        dialogFragment = null
+    }
+
     override fun onPreferenceChange(
         preference: Preference,
         newValue: Any?
     ): Boolean {
-        // Logcat.d( "K:%s V:%s", preference.key, newValue )
 
         listener?.let {
             return it.onPreferenceChange(preference, newValue)
         }
+
         return true
     }
 }
