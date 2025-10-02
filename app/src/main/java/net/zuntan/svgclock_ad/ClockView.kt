@@ -134,7 +134,7 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
                         val contentResolver = this.context.contentResolver
                         val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
-                        uri?.let {
+                        uri?.let { it ->
                             contentResolver.takePersistableUriPermission(it, flags)
                             contentResolver.openInputStream(it).use { inp ->
                                 inp?.let {

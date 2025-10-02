@@ -3,7 +3,6 @@ package net.zuntan.svgclock_ad
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.EditTextPreference
-import androidx.preference.Preference
 
 class CustomEditTextPreference @JvmOverloads constructor(
     context: Context,

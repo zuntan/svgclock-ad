@@ -16,7 +16,6 @@ import android.os.IBinder
 import android.util.Log
 import android.hardware.display.DisplayManager
 import android.os.Build
-import android.os.SystemClock
 import android.view.Display
 import androidx.core.app.NotificationCompat
 

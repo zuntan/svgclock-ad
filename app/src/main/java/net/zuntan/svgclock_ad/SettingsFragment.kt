@@ -2,15 +2,11 @@ package net.zuntan.svgclock_ad
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
-import com.caverock.androidsvg.SVG
-import androidx.core.net.toUri
 
 private fun makeConfPresetThemeValue(no: Int): String {
     return "Theme_%d".format(no)

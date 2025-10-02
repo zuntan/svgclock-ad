@@ -22,10 +22,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.FragmentContainerView
 import androidx.preference.Preference
-import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 import com.caverock.androidsvg.SVG
-import kotlin.toString
 
 
 class MainActivity : AppCompatActivity() {

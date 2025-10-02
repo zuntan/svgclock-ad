@@ -1,6 +1,7 @@
 package net.zuntan.svgclock_ad
 
 import android.graphics.Canvas
+import android.graphics.RectF
 import androidx.ink.geometry.AffineTransform
 import androidx.ink.geometry.ImmutableAffineTransform
 import androidx.ink.geometry.ImmutableVec
@@ -11,6 +12,9 @@ import kotlinx.serialization.*
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.StringReader
+import java.io.StringWriter
 import java.time.LocalDateTime
 import kotlin.experimental.and
 import kotlin.math.min
@@ -130,8 +134,8 @@ class ImageInfo {
     var enableSecondSmoothly: Boolean = true
 
     constructor(src: InputStream) {
-        val src = java.io.InputStreamReader(src)
-        val tmp = java.io.StringWriter()
+        val src = InputStreamReader(src)
+        val tmp = StringWriter()
 
         var buf = CharArray(1024)
 
@@ -193,7 +197,7 @@ class ImageInfo {
 
         val xpp = f.newPullParser()
 
-        xpp.setInput(java.io.StringReader(srcOrg))
+        xpp.setInput(StringReader(srcOrg))
 
         var evt: Int = xpp.eventType
 
@@ -255,7 +259,7 @@ class ImageInfo {
 
             val xpp = f.newPullParser()
 
-            xpp.setInput(java.io.StringReader(src))
+            xpp.setInput(StringReader(src))
 
             var evt: Int = xpp.eventType
 
@@ -333,7 +337,7 @@ class ImageInfo {
 
             val xpp = f.newPullParser()
 
-            xpp.setInput(java.io.StringReader(srcConfig))
+            xpp.setInput(StringReader(srcConfig))
 
             var evt: Int = xpp.eventType
 
@@ -400,7 +404,7 @@ class ImageInfo {
 
     private fun filterXml(layerName: String): String? {
 
-        val sw = java.io.StringWriter()
+        val sw = StringWriter()
 
         val f = XmlPullParserFactory.newInstance()
 
@@ -410,7 +414,7 @@ class ImageInfo {
         val xpp = f.newPullParser()
         val xpps = f.newSerializer()
 
-        xpp.setInput(java.io.StringReader(srcOrg))
+        xpp.setInput(StringReader(srcOrg))
         xpps.setOutput(sw)
 
         var evt: Int = xpp.eventType
@@ -517,7 +521,7 @@ class ImageInfo {
         val ddl = (cw - ddw) / 2
         val ddt = (ch - ddh) / 2
 
-        val vp = android.graphics.RectF(ddl, ddt, ddl + ddw, ddt + ddh)
+        val vp = RectF(ddl, ddt, ddl + ddw, ddt + ddh)
 
         val bcx = ddl + ddw * (baseCenter!!.x / (vboxWH!!.x - vboxXY!!.x))
         val bcy = ddt + ddh * (baseCenter!!.y / (vboxWH!!.y - vboxXY!!.y))
@@ -566,10 +570,10 @@ class ImageInfo {
                     }
 
                     else -> {
-                        var ret: String? =
+                        val ret: String? =
                             if( config?.with_text_segment == true )
                             {
-                                var ret: String? = null
+                                var ret: String?
 
                                 ret =
                                     RE_SEGMENT_NUM.matchEntire(kw)?.let { m ->

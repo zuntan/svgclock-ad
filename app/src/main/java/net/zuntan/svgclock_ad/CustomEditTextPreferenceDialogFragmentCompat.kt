@@ -3,12 +3,9 @@ package net.zuntan.svgclock_ad
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
-import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceDialogFragmentCompat
 
-
 class CustomEditTextPreferenceDialogFragmentCompat : PreferenceDialogFragmentCompat() {
-
 
     companion object {
         fun newInstance(key: String): CustomEditTextPreferenceDialogFragmentCompat {
@@ -26,10 +23,10 @@ class CustomEditTextPreferenceDialogFragmentCompat : PreferenceDialogFragmentCom
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            mText = getEditTextPreference().getText()
+        mText = if (savedInstanceState == null) {
+            getEditTextPreference().text
         } else {
-            mText = savedInstanceState.getCharSequence(SAVE_STATE_TEXT)
+            savedInstanceState.getCharSequence(SAVE_STATE_TEXT)
         }
     }
 
