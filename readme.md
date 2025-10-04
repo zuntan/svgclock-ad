@@ -39,6 +39,20 @@ This program's widget updates its display every less than one second. This can c
 
 Please download the latest binary from the [release page](https://github.com/zuntan/svgclock-ad/releases).
 
+# How to Use
+  
+
+Launching this app displays the clock and settings screen.
+  
+
+- Tap the clock area to enlarge the clock display. Tap the clock again to return to the original size.
+- Long-press the clock area to add the “Widget Clock”.
+- **To move the “Widget Clock”, set “Clock Service for Widget” to ‘RUN’.** To stop it, set it to “STOP”.
+- In Settings, you can:
+	- Customize the second hand.
+	- Change the clock theme.
+	- Use custom themes you've downloaded and saved. For instructions on creating custom themes, see [here](https://github.com/zuntan/svgclock-rs).
+
 # Design Call!
 
 The author isn't very skilled at drawing. We'd be thrilled if you could provide us with a beautiful clock design.
