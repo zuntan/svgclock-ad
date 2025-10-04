@@ -34,22 +34,22 @@ class PowerStateReceiver : BroadcastReceiver() {
 
         when (intent?.action) {
             Intent.ACTION_POWER_CONNECTED -> {
-                Log.d("PowerStateReceiver", "充電器が接続されました")
+                Logcat.d("PowerStateReceiver")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
 
             Intent.ACTION_POWER_DISCONNECTED -> {
-                Log.d("PowerStateReceiver", "充電器が切断されました")
+                Logcat.d("PowerStateReceiver")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
 
             Intent.ACTION_SCREEN_ON -> {
-                Log.d("PowerStateReceiver", "ACTION_SCREEN_ON")
+                Logcat.d("PowerStateReceiver")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
 
             Intent.ACTION_SCREEN_OFF -> {
-                Log.d("PowerStateReceiver", "ACTION_SCREEN_OFF")
+                Logcat.d("PowerStateReceiver")
                 serviceIntent.action = AppService.ACTION_TO_STATE_UPDATE
             }
         }

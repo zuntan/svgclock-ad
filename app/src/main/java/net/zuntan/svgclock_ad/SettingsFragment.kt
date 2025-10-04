@@ -27,6 +27,14 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     companion object {
         const val REQUEST_CODE_DOWNLOADED_IMAGE = 200
+
+        const val CONF_SHOW_SECOND = "confShowSecond"
+        const val CONF_ENABLE_SUBSECOND = "confEnableSubSecond"
+        const val CONF_ENABLE_SECOND_SMOOTHLY = "confEnableSecondSmoothly"
+        const val CONF_PRESET_THEME = "confPresetTheme"
+        const val CONF_ENABLE_CUSTOM_THEME = "confEnableCustomTheme"
+        const val CONF_CUSTOM_THEME_LOCATION = "confCustomThemeLocation"
+
     }
 
     var listener: Preference.OnPreferenceChangeListener? = null
@@ -35,8 +43,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
         for (x in arrayOf(
-            "confShowSecond", "confEnableSubSecond", "confEnableSecondSmoothly",
-            "confPresetTheme", "confEnableCustomTheme", "confCustomThemeLocation"
+            CONF_SHOW_SECOND, CONF_ENABLE_SUBSECOND, CONF_ENABLE_SECOND_SMOOTHLY,
+            CONF_PRESET_THEME, CONF_ENABLE_CUSTOM_THEME, CONF_CUSTOM_THEME_LOCATION
         )) {
             findPreference<Preference>(x)?.onPreferenceChangeListener = this
         }
@@ -46,7 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         var currentPresetThemeFound = false
         val currentPresetTheme =
-            preferenceManager.sharedPreferences?.getString("confPresetTheme", null)
+            preferenceManager.sharedPreferences?.getString(CONF_PRESET_THEME, null)
 
         for (x in LIST_PRESET_THEME) {
 
@@ -67,7 +75,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             }
         }
 
-        findPreference<ListPreference>("confPresetTheme")?.apply {
+        findPreference<ListPreference>(CONF_PRESET_THEME )?.apply {
             entries = themeEntries.toTypedArray()
             entryValues = themeEntryValues.toTypedArray()
 
@@ -76,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             }
         }
 
-        findPreference<EditTextPreference>("confCustomThemeLocation")?.apply {
+        findPreference<EditTextPreference>(CONF_CUSTOM_THEME_LOCATION )?.apply {
             setOnPreferenceClickListener {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
@@ -98,13 +106,13 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
                 override fun onThemeChanged() {
 
                     for (x in arrayOf(
-                        "confShowSecond", "confEnableSecondSmoothly",
+                        CONF_SHOW_SECOND, CONF_ENABLE_SECOND_SMOOTHLY,
                     )) {
                         findPreference<Preference>(x)?.isEnabled = it.haveSecondHandle()
                     }
 
                     for (x in arrayOf(
-                        "confEnableSubSecond"
+                        CONF_ENABLE_SUBSECOND
                     )) {
                         findPreference<Preference>(x)?.isEnabled = it.haveSubSecond()
                     }

@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
 
                     Logcat.d( "K:%s V:%s", preference.key, newValue )
 
-                    if( preference.key == "confCustomThemeLocation" )
+                    if( preference.key == SettingsFragment.CONF_CUSTOM_THEME_LOCATION )
                     {
                         var ok = false
 
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity() {
 
                             findViewById<FragmentContainerView>( R.id.fragmentContainerView ).apply {
                                 getFragment<SettingsFragment>().apply {
-                                    findPreference<SwitchPreference>("confEnableCustomTheme" )?.isChecked = true
+                                    findPreference<SwitchPreference>(SettingsFragment.CONF_ENABLE_CUSTOM_THEME )?.isChecked = true
                                 }
                             }
                         }

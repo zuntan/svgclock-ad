@@ -49,20 +49,20 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
             sharedPreferences?.let {
 
                 if (listOf(
-                        "confPresetTheme",
-                        "confEnableCustomTheme",
-                        "confCustomThemeLocation",
+                        SettingsFragment.CONF_PRESET_THEME,
+                        SettingsFragment.CONF_ENABLE_CUSTOM_THEME,
+                        SettingsFragment.CONF_CUSTOM_THEME_LOCATION,
                         null
                     ).any { it -> it == key }
                 ) {
                     var done = false
 
-                    val cect = sharedPreferences.getBoolean("confEnableCustomTheme", false)
+                    val cect = sharedPreferences.getBoolean(SettingsFragment.CONF_ENABLE_CUSTOM_THEME, false)
 
                     if (cect) {
 
                         try {
-                            val uri = sharedPreferences.getString("confCustomThemeLocation", null )?.toUri()
+                            val uri = sharedPreferences.getString(SettingsFragment.CONF_CUSTOM_THEME_LOCATION, null )?.toUri()
 
                             val contentResolver = this.contentResolver
                             val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -84,7 +84,7 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
                     }
 
                     if( !done ) {
-                        val cpt = sharedPreferences.getString("confPresetTheme", null)
+                        val cpt = sharedPreferences.getString(SettingsFragment.CONF_PRESET_THEME, null)
                         var theme = LIST_PRESET_THEME.find { it -> it.second == cpt }
 
                         if (theme == null) {
@@ -96,9 +96,9 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
                 }
 
                 imageInfo?.apply {
-                    showSecond = it.getBoolean("confShowSecond", true)
-                    enableSubSecond = it.getBoolean("confEnableSubSecond", false)
-                    enableSecondSmoothly = it.getBoolean("confEnableSecondSmoothly", true)
+                    showSecond = it.getBoolean(SettingsFragment.CONF_SHOW_SECOND, true)
+                    enableSubSecond = it.getBoolean(SettingsFragment.CONF_ENABLE_SUBSECOND, false)
+                    enableSecondSmoothly = it.getBoolean(SettingsFragment.CONF_ENABLE_SECOND_SMOOTHLY, true)
 
                     onThemeChanged?.onThemeChanged()
                 }
