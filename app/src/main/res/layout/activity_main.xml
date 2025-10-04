@@ -75,7 +75,7 @@
         <Switch
             android:id="@+id/swService"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:paddingHorizontal="16dp"
 
             android:showText="true"
@@ -105,7 +105,24 @@
             android:id="@+id/fragmentContainerView"
             android:name="net.zuntan.svgclock_ad.SettingsFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#999999" />
+
+        <TextView
+            android:id="@+id/textViewUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:text="https://github.com/zuntan/svgclock-ad"
+            android:textAlignment="center"
+             />
 
     </LinearLayout>
 </LinearLayout>

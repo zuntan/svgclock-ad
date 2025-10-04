@@ -6,11 +6,14 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Paint
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.view.View
 import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -155,6 +158,20 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+
+        findViewById<TextView>(R.id.textViewUrl)?.apply {
+            setOnClickListener {
+                val uri = "$text#svgclock-ad".toUri()
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Logcat.e( e )
+                }
+            }
+
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
 
         checkNotificationPermission()
