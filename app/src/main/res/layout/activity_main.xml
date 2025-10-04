@@ -97,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
-            android:text="Configration"
+            android:text="@string/configration"
             android:textStyle="bold"
             />
 
@@ -120,9 +120,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
-            android:text="https://github.com/zuntan/svgclock-ad"
+            android:text="@string/zuntan_url"
             android:textAlignment="center"
              />
 
     </LinearLayout>
+
 </LinearLayout>

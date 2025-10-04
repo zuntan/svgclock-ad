@@ -1,39 +1,47 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Customize Second">
+    <PreferenceCategory app:title="@string/conf_customize_second">
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="confShowSecond"
-            android:title="Show Second" />
+            android:title="@string/conf_show_second" />
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="confEnableSubSecond"
-            android:title="Enable sub second handle" />
+            android:title="@string/conf_enable_subsecond" />
+
         <SwitchPreference
             android:defaultValue="true"
             android:key="confEnableSecondSmoothly"
-            android:title="Endble second handle smoothly" />
+            android:title="@string/conf_enable_second_smoothly" />
+
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Theme" >
+    <PreferenceCategory app:title="@string/conf_theme" >
+
         <ListPreference
             android:defaultValue="1"
             android:entries="@array/reply_entries"
             android:entryValues="@array/reply_values"
             android:key="confPresetTheme"
-            android:title="Preset theme"
+            android:title="@string/conf_preset_theme"
             app:useSimpleSummaryProvider="true" />
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="confEnableCustomTheme"
-            android:title="Enable custom theme" />
+            android:title="@string/conf_enable_custom_theme" />
+
         <net.zuntan.svgclock_ad.CustomEditTextPreference
             android:key="confCustomThemeLocation"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Custom theme location"
+            android:title="@string/conf_custom_theme_location"
             app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

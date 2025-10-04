@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.textViewUrl)?.apply {
             setOnClickListener {
-                val uri = "$text#svgclock-ad".toUri()
+                val uri =  getString( R.string.zuntan_url_for_open ).toUri()
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 try {
                     startActivity(intent)
