@@ -39,6 +39,10 @@ This program's widget updates its display every less than one second. This can c
 
 Please download the latest binary from the [release page](https://github.com/zuntan/svgclock-ad/releases).
 
+# Design Call!
+
+The author isn't very skilled at drawing. We'd be thrilled if you could provide us with a beautiful clock design.
+Please submit your designs via GitHub issues. Thank you!
 
 ---
 

@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">svgclock-ad</string>
+
+    <!--  -->
+
+    <string name="notification_content_title">Clock Service for Widget</string>
+    <string name="notification_content_text">Running. バッテリー消費量に注意してください。</string>
+
+    <string name="notification_enabled">通知が有効になりました。</string>
+    <string name="notification_enable_error">通知が拒否されました。手動で設定を変更してください。</string>
+
+    <string name="zoom_clock_size">大きく表示するには、時計をタッチしてください。</string>
+    <string name="restore_clock_size">元の大きさに戻すには、もう一度時計をタッチしてください。</string>
+    <string name="append_widget">ウィジェットを追加するには、時計を長押ししてください。</string>
+
+    <!--  -->
+
+    <string name="switch_clock_service">Clock Service for Widget</string>
+    <string name="configration">設定</string>
+    <string name="zuntan_url">https://github.com/zuntan/svgclock-ad</string>
+    <string name="zuntan_url_for_open">https://github.com/zuntan/svgclock-ad/blob/master/readme_ja.md#svgclock-ad</string>
+
+    <!--  -->
+
+    <string name="conf_customize_second">秒針のカスタマイズ</string>
+    <string name="conf_show_second">秒針を表示</string>
+    <string name="conf_enable_subsecond">サブ秒針を有効にする</string>
+    <string name="conf_enable_second_smoothly">秒針をなめらかに動かす</string>
+
+    <string name="conf_theme">テーマ</string>
+    <string name="conf_preset_theme">プリセットテーマ</string>
+    <string name="conf_enable_custom_theme">カスタムテーマを有効にする</string>
+    <string name="conf_custom_theme_location">カスタムテーマの位置</string>
+</resources>
