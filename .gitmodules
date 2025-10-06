@@ -1,0 +1,3 @@
+[submodule "app/src/main/res/raw/theme"]
+	path = app/src/main/res/raw/theme
+	url = https://github.com/zuntan/svgclock-tm.git
