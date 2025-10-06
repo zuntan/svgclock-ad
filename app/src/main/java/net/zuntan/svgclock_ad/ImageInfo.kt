@@ -723,21 +723,6 @@ class ImageInfo {
             }
         }
 
-        svgLongHandle?.run {
-            documentWidth = vp.width()
-            documentHeight = vp.height()
-
-            canvas.save()
-
-            canvas.translate(bcx, bcy)
-            canvas.rotate(hMin)
-            canvas.translate(-bcx, -bcy)
-
-            renderToCanvas(canvas, vp)
-
-            canvas.restore()
-        }
-
         svgShortHandle?.run {
             documentWidth = vp.width()
             documentHeight = vp.height()
@@ -746,6 +731,21 @@ class ImageInfo {
 
             canvas.translate(bcx, bcy)
             canvas.rotate(hHour)
+            canvas.translate(-bcx, -bcy)
+
+            renderToCanvas(canvas, vp)
+
+            canvas.restore()
+        }
+
+        svgLongHandle?.run {
+            documentWidth = vp.width()
+            documentHeight = vp.height()
+
+            canvas.save()
+
+            canvas.translate(bcx, bcy)
+            canvas.rotate(hMin)
             canvas.translate(-bcx, -bcy)
 
             renderToCanvas(canvas, vp)

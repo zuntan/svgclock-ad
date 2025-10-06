@@ -13,14 +13,14 @@ private fun makeConfPresetThemeValue(no: Int): String {
 }
 
 val LIST_PRESET_THEME = listOf(
-    Triple(1, makeConfPresetThemeValue(1), R.raw.clock_theme_1),
-    Triple(2, makeConfPresetThemeValue(2), R.raw.clock_theme_2),
-    Triple(3, makeConfPresetThemeValue(3), R.raw.clock_theme_3),
-    Triple(4, makeConfPresetThemeValue(4), R.raw.clock_theme_4),
-    Triple(5, makeConfPresetThemeValue(5), R.raw.clock_theme_5),
-    Triple(6, makeConfPresetThemeValue(6), R.raw.clock_theme_6),
-    Triple(7, makeConfPresetThemeValue(7), R.raw.clock_theme_7),
-    Triple(8, makeConfPresetThemeValue(8), R.raw.clock_theme_8),
+    Triple(1, makeConfPresetThemeValue(1), "theme/clock_theme_1.svg"),
+    Triple(2, makeConfPresetThemeValue(2), "theme/clock_theme_2.svg"),
+    Triple(3, makeConfPresetThemeValue(3), "theme/clock_theme_3.svg"),
+    Triple(4, makeConfPresetThemeValue(4), "theme/clock_theme_4.svg"),
+    Triple(5, makeConfPresetThemeValue(5), "theme/clock_theme_5.svg"),
+    Triple(6, makeConfPresetThemeValue(6), "theme/clock_theme_6.svg"),
+    Triple(7, makeConfPresetThemeValue(7), "theme/clock_theme_7.svg"),
+    Triple(8, makeConfPresetThemeValue(8), "theme/clock_theme_8.svg"),
 )
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, CustomEditTextPreference.DialogCloseListener {
@@ -58,20 +58,21 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         for (x in LIST_PRESET_THEME) {
 
-            val src = resources.openRawResource(x.third)
-            val im = ImageInfo(src)
+            context?.assets?.open( x.third )?.use { src ->
+                val im = ImageInfo(src)
 
-            val nm = if (im.config == null || im.config!!.theme_name == null) {
-                ""
-            } else {
-                im.config!!.theme_name
-            }
+                val nm = if (im.config == null || im.config!!.theme_name == null) {
+                    ""
+                } else {
+                    im.config!!.theme_name
+                }
 
-            themeEntries.add("[No.%d] %s".format(x.first, nm))
-            themeEntryValues.add(x.second)
+                themeEntries.add("[No.%d] %s".format(x.first, nm))
+                themeEntryValues.add(x.second)
 
-            if (x.second == currentPresetTheme) {
-                currentPresetThemeFound = true
+                if (x.second == currentPresetTheme) {
+                    currentPresetThemeFound = true
+                }
             }
         }
 

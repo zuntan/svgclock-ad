@@ -91,7 +91,7 @@ class AppApplication : Application(), SharedPreferences.OnSharedPreferenceChange
                             theme = LIST_PRESET_THEME.first()
                         }
 
-                        imageInfo = ImageInfo(resources.openRawResource(theme.third))
+                        imageInfo = ImageInfo(assets.open(theme.third))
                     }
                 }
 

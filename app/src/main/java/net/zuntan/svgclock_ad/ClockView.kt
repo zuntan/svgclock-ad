@@ -165,7 +165,7 @@ class ClockView : View, SharedPreferences.OnSharedPreferenceChangeListener {
                         theme = LIST_PRESET_THEME.first()
                     }
 
-                    imageInfo = ImageInfo(resources.openRawResource(theme.third))
+                    imageInfo = ImageInfo( context.assets.open(theme.third))
                 }
             }
 
